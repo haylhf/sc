@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+      xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type='text/javascript' src='__ROOT__/Public/js/vue.js'></script>
+    <script type='text/javascript' src='__ROOT__/Public/js/jquery-3.1.1.min.js'></script>
+    <style>
+        body {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body style="zoom: 100%">
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="Jumbotron" style="margin-top: 5px;height: 100px">
+            <h1>学生选课系统</h1>
+        </div>
+
+        <!--<ul class="nav navbar-nav navbar-right">-->
+        <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span>登录</a></li>-->
+        <!--</ul>-->
+    </div>
+</nav>
+
+<div id="divForm" class="panel panel-primary" style="margin-left:30%; margin-right:30%;">
+    <div class="panel-heading">
+        <h2 class="panel-title" style="font-size: 20px;">管理员登录</h2>
+    </div>
+
+    <div class="container">
+        <form class="form-horizontal" role="form" style="margin-top: 30px;">
+            <div class="form-group">
+                <label class="control-label col-sm-1">账号:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" v-model="submitData.userName" placeholder="管理员名称"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-1" for="pwd">密码:</label>
+                <div class="col-sm-4">
+                    <input type="password" class="form-control" v-model="submitData.userPwd" placeholder="输入密码"/>
+                </div>
+            </div>
+
+            <div class="col-sm-offset-2 col-sm-3" style="text-align: right;margin-top:20px;margin-bottom:20px;">
+                <button type="button" class="btn btn-primary" v-on:click="submit" style="width: 100px; height: 36px">
+                    提交
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="alert alert-danger" v-if="isError">
+     用户名或密码错误!
+    </div>
+
+</div>
+
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: '#divForm',
+        data: {
+            isError: false,
+            submitUrl: "{:U('admin/ajaxLogin')}",
+            submitData: {
+                userId: '',
+                userName: '',
+                userPwd: '',
+                role: 0,
+            },
+        },
+        methods: {
+            submit: function () {
+                $.ajax({
+                    url: this.submitUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: this.submitData,
+                    success: function (data) {
+                        app.isError = data.status == 0;
+                        if (!app.isError) {
+//                            alert('success!');
+                            //window.location.href = "{:U('admin/adminMain')}";
+                        }
+
+                    },
+                })
+            }
+        }
+        ,
+    })
+</script>
