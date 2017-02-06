@@ -9,14 +9,15 @@
     font-style: normal;
 }
 @font-face {
-    font-family: 'Bauhaus';
-    src:url(../fonts/BAUHS93.ttf) format('truetype');
+    font-family: 'fontawesome';
+    src:url(../fonts/fontawesome-webfont.woff) format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 .title-logo {
-    font-family:Bauhaus;
+    font-family:fontawesome;
     text-decoration:none;
+    font-weight: bold;
     /*line-height: 1;*/
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -16,4 +16,22 @@ class TeacherModel extends Model
         return $list;
     }
 
+    public function getRecords($condition = null)
+    {
+        $data = null;
+        if ($condition['id']) {
+            $data['id'] = $condition['id'];
+        }
+        $list = M('teacher')
+            ->alias("t")
+            ->join('LEFT JOIN '.C('DB_PREFIX').'department d ON t.department_id=d.id')
+            ->where($data)
+            ->field('t.*,d.`name` AS department_name')
+            ->select();
+        if (!isset($list)) {
+            $list = array();
+        }
+        return $list;
+    }
+
 }

@@ -25,7 +25,7 @@ class AdminModel extends Model
         $data['password'] = $util->getEncryptCode($loginData['password']);
         $data['id'] = $loginData['id'];
         $result = M('admin')->data($data)->save();
-        if ($result != null) {
+        if ($result) {
             return true;
         }
         return false;

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+      xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+    <style>
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table tbody tr td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        body {
+
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
+            <li class="active"><a href="#">教师管理</a></li>
+            <li><a href="{:U('admin/index')}">学生管理</a></li>
+            <li><a href="{:U('admin/index')}">教学楼管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <button type="button" class="btn btn-link" v-on:click="logout">
+                    <span class="glyphicon glyphicon-log-out"></span> 注销
+                </button>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="divApp">
+    <div style="margin-bottom: 15px">
+        <button class="btn btn-primary" v-on:click="addTeacher"
+                style="height: 44px;text-align:right; display:inline; margin-left: 15px">
+            <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加教师
+        </button>
+    </div>
+
+    <div id="" class="container-fluid" style="margin-bottom: 15px">
+        <div class="panel panel-primary">
+            <div class="panel-heading panel-title">教师记录
+                <span class="badge" style="margin-left: 5px">{{records.length}}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover"  align="center" v-show="records.length > 0"
+                       style="table-layout: fixed">
+                    <thead>
+                    <tr>
+                        <th>教师编号</th>
+                        <th>教师姓名</th>
+                        <th>系别</th>
+                        <th>电话</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(record, index) in records">
+                        <td style="vertical-align: middle">
+                            <div>
+                                {{record.id}}
+                            </div>
+                        </td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.department_name}}</td>
+                        <td>{{record.phone}}</td>
+                        <td>{{record.email}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p v-show="records.length == 0"
+               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">暂无教师记录~~~</p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    var appHeader = new Vue({
+        el: '#divHeader',
+        data: {
+            submitUrl: "{:U('admin/ajaxLogout')}",
+        },
+        methods: {
+            logout: function () {
+                $.ajax({
+                    url: this.submitUrl,
+                    type: 'POST',
+                    dataType: 'json',
+//                    data: '',
+                    success: function (result) {
+                        if (result.status) {
+                            window.location.href = "{:U('admin/index')}";
+                        }
+                        else {
+
+                        }
+                    },
+                })
+            },
+        },
+    });
+
+    var app = new Vue({
+        el: '#divApp',
+        data: {
+            records: [],
+        },
+        methods: {
+            addTeacher: function () {
+
+            },
+        },
+        created: function () {
+            this.records = JSON.parse('{$records}');
+        },
+    })
+</script>
