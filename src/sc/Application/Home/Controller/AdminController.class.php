@@ -23,10 +23,10 @@ class AdminController extends BaseLoginController
     public function adminMain()
     {
         $user = null;
-
+        $currentUser = $_SESSION["user"];
         if (isset($currentUser)) {
-            $user["name"] = parent::$currentuser["name"];
-            $user["id"] = parent::$currentuser["id"];
+            $user["name"] = $currentUser["name"];
+            $user["id"] = $currentUser["id"];
         }
         $this->assign("adminUser", json_encode($user));
         $this->assignUser();
