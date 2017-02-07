@@ -24,7 +24,7 @@ class TeacherModel extends Model
         }
         $list = M('teacher')
             ->alias("t")
-            ->join('LEFT JOIN '.C('DB_PREFIX').'department d ON t.department_id=d.id')
+            ->join('LEFT JOIN ' . C('DB_PREFIX') . 'department d ON t.department_id=d.id')
             ->where($data)
             ->field('t.*,d.`name` AS department_name')
             ->select();
@@ -32,6 +32,24 @@ class TeacherModel extends Model
             $list = array();
         }
         return $list;
+    }
+
+    public function deleteRecord($condition)
+    {
+        $data['id'] = $condition['id'];
+        $result = M('teacher')->where($data)->delete();
+        return $result;
+    }
+
+    public function addInfo($info)
+    {
+        $data['id'] = $info['id'];
+        $data['name'] = $info['name'];
+
+//        $sql = M('teacher')->fetchSql(true)->data($data)->add();
+//        echo $sql;
+        $result = M('teacher')->data($data)->add();
+        return $result;
     }
 
 }

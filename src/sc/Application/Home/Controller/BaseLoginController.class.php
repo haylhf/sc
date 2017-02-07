@@ -7,6 +7,7 @@ use Think\Controller;
 
 class BaseLoginController extends Controller
 {
+
     public function ajaxLogin()
     {
         $result = null;
@@ -31,7 +32,6 @@ class BaseLoginController extends Controller
             $user["name"] = $result['name'];
             $user["role"] = $_POST['role'];
             $_SESSION["user"] = $user;
-
             $this->success(true);
         } else {
             $this->error($data);

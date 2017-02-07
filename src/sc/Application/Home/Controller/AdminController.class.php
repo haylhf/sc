@@ -15,16 +15,21 @@ class AdminController extends BaseLoginController
         $this->display();
     }
 
+    public function assignUser()
+    {
+        $this->assign("currentuser", json_encode($_SESSION["user"]));
+    }
+
     public function adminMain()
     {
         $user = null;
-        $currentUser = $_SESSION["user"];
 
         if (isset($currentUser)) {
-            $user["name"] = $currentUser["name"];
-            $user["id"] = $currentUser["id"];
+            $user["name"] = parent::$currentuser["name"];
+            $user["id"] = parent::$currentuser["id"];
         }
         $this->assign("adminUser", json_encode($user));
+        $this->assignUser();
         $this->display();
     }
 
@@ -52,6 +57,32 @@ class AdminController extends BaseLoginController
     {
         $result = D("teacher")->getRecords();
         $this->assign("records", json_encode($result));
+        $this->assignUser();
         $this->display();
+    }
+
+    public function ajaxDelete()
+    {
+        $condition['id'] = $_POST['id'];
+        if ($condition['id']) {
+            $result = D("teacher")->deleteRecord($condition);
+        }
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+
+    public function ajaxAdd()
+    {
+        $data['id'] = $_POST['id'];
+        $data['name'] = $_POST['name'];
+        $result = D("teacher")->add($data);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
     }
 }

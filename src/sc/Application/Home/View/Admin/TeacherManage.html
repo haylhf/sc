@@ -39,14 +39,17 @@
         </div>
 
         <ul class="nav navbar-nav">
-            <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
             <li class="active"><a href="#">教师管理</a></li>
             <li><a href="{:U('admin/index')}">学生管理</a></li>
             <li><a href="{:U('admin/index')}">教学楼管理</a></li>
+            <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <button type="button" class="btn btn-link" v-on:click="logout">
+                <div style="margin-top: 8px">欢迎您，{{currentuser.role|converterRole}}:{{currentuser.name}}</div>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
                     <span class="glyphicon glyphicon-log-out"></span> 注销
                 </button>
             </li>
@@ -68,7 +71,7 @@
                 <span class="badge" style="margin-left: 5px">{{records.length}}</span>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover"  align="center" v-show="records.length > 0"
+                <table class="table table-bordered table-hover" align="center" v-show="records.length > 0"
                        style="table-layout: fixed">
                     <thead>
                     <tr>
@@ -77,19 +80,25 @@
                         <th>系别</th>
                         <th>电话</th>
                         <th>Email</th>
+                        <th width="10%">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="(record, index) in records">
-                        <td style="vertical-align: middle">
-                            <div>
-                                {{record.id}}
-                            </div>
-                        </td>
+                        <td>{{record.id}}</td>
                         <td>{{record.name}}</td>
                         <td>{{record.department_name}}</td>
                         <td>{{record.phone}}</td>
                         <td>{{record.email}}</td>
+                        <td>
+
+                            <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
+                                    data-toggle="tooltip" data-placement="top"
+                                    title="删除"
+                            >
+                                <span class="glyphicon glyphicon-minus-sign"></span>
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -99,6 +108,84 @@
         </div>
 
     </div>
+
+    <!--Add item modal-->
+    <div class="modal fade" id="addInfo" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <h2>添加教师</h2>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">教师编号:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control"
+                                       v-on:keyup="onKeyUp"
+                                       v-model="newInfoModel.id"
+                                       placeholder="输入教师编号"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">姓名:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control"
+                                       v-on:keyup="onKeyUp"
+                                       v-model="newInfoModel.name"
+                                       placeholder="输入姓名"/>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;">
+                        {{errorMsg}}!
+                    </div>
+                    <button type="button" style="margin-top: 5px;" class="btn btn-primary btn-block"
+                            v-on:click="onAddInfoData">确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteConfirmMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的教师吗？
+                    <button type="button" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
+                            v-on:click="onConfirmDelete">确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="submitMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 20px">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    {{resultMsg}}!
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
@@ -107,6 +194,7 @@
     var appHeader = new Vue({
         el: '#divHeader',
         data: {
+            currentuser: {},
             submitUrl: "{:U('admin/ajaxLogout')}",
         },
         methods: {
@@ -120,27 +208,123 @@
                         if (result.status) {
                             window.location.href = "{:U('admin/index')}";
                         }
-                        else {
-
-                        }
                     },
                 })
             },
+        },
+        created: function () {
+            this.currentuser = JSON.parse('{$currentuser}');
+        },
+        filters: {
+            converterRole: function (role) {
+                return getRoleName(role);
+            }
         },
     });
 
     var app = new Vue({
         el: '#divApp',
         data: {
+            newInfoModel: {
+                id: '',
+                name: '',
+                department: '',
+            },
+            selectInfo: {},
             records: [],
+            resultMsg: '',
+            errorMsg: '',
+            isError: false,
+            deleteUrl: "{:U('admin/ajaxDelete')}",
+            addInfoUrl: "{:U('admin/ajaxAdd')}",
+
         },
         methods: {
-            addTeacher: function () {
-
+            verifyForm: function () {
+                this.isError = false;
+                if (isStringEmpty(this.newInfoModel.id)) {
+                    this.isError = true;
+                    this.errorMsg = '教师编号不能为空';
+                }
+                else {
+                    var existId = this.records.find(function (item) {
+                        return item.id == app.newInfoModel.id;
+                    });
+                    if (existId) {
+                        this.isError = true;
+                        this.errorMsg = '教师编号:' + this.newInfoModel.id + '已经存在，请重新录入编号';
+                    }
+                }
+                if (!this.isError && isStringEmpty(this.newInfoModel.name)) {
+                    this.isError = true;
+                    this.errorMsg = '姓名不能为空';
+                }
             },
-        },
+
+            onKeyUp: function () {
+                this.verifyForm();
+            },
+            addTeacher: function () {
+                $("#addInfo").modal();
+            }
+            ,
+            onAddInfoData: function () {
+                this.verifyForm();
+                if (!this.isError) {
+                    $.ajax({
+                        url: this.addInfoUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: this.newInfoModel,
+                        success: function (result) {
+                            $("#addInfo").modal('hide');
+                            if (result.status) {
+                                document.location.reload();
+                            } else {
+                                app.resultMsg = '添加失败';
+                                $("#submitMsg").modal();
+                            }
+                        },
+                        error: function (data) {
+                            $("#addInfo").modal('hide');
+                            app.resultMsg = '添加失败';
+                            $("#submitMsg").modal();
+                        }
+                    })
+                }
+            },
+
+            deleteRecord: function (item) {
+                this.selectInfo = item;
+                if (this.selectInfo) {
+                    $("#deleteConfirmMsg").modal();
+                }
+            }
+            ,
+
+            onConfirmDelete: function () {
+                $("#deleteConfirmMsg").modal('hide');
+                $.ajax({
+                    url: this.deleteUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: this.selectInfo,
+                    success: function (result) {
+                        var index = app.records.indexOf(app.selectInfo);
+                        app.records.splice(index, 1);
+//                        if (result.status) {
+//                            document.location.reload();
+//                        }
+                        app.resultMsg = result.status ? '删除成功' : '删除失败';
+                        $("#submitMsg").modal();
+                    },
+                })
+            }
+        }
+        ,
         created: function () {
             this.records = JSON.parse('{$records}');
-        },
+        }
+        ,
     })
 </script>
