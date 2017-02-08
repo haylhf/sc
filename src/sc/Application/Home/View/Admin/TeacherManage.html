@@ -2,18 +2,19 @@
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
       xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
       xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
-      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
-<head>
-    <title>学生选课系统</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
-    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
-    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
-    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
-    <style>
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml" >
+<head >
+    <title >学生选课系统</title >
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css" >
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
+
+    <style >
         table thead tr th {
             text-align: center;
             vertical-align: middle;
@@ -29,168 +30,194 @@
             font-size: 16px;
         }
 
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid" id="divHeader">
-        <div class="navbar-header" style="margin-top: 5px">
-            <a class="title-logo" href="#">学生选课系统</a>
-        </div>
+    </style >
+</head >
+<body >
+<nav class="navbar navbar-default" >
+    <div class="container-fluid" id="divHeader" >
+        <div class="navbar-header" style="margin-top: 5px" >
+            <a class="title-logo" href="#" >学生选课系统</a >
+        </div >
 
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="#">教师管理</a></li>
-            <li><a href="{:U('admin/index')}">学生管理</a></li>
-            <li><a href="{:U('admin/index')}">教学楼管理</a></li>
-            <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <div style="margin-top: 8px">欢迎您，{{currentuser.role|converterRole}}:{{currentuser.name}}</div>
-            </li>
-            <li>
-                <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
-                    <span class="glyphicon glyphicon-log-out"></span> 注销
-                </button>
-            </li>
-        </ul>
-    </div>
-</nav>
+        <ul class="nav navbar-nav" >
+            <li class="active" ><a href="#" >教师管理</a ></li >
+            <li ><a href="{:U('admin/StudentManage')}" >学生管理</a ></li >
+            <li ><a href="{:U('admin/BuildingManage')}" >教学楼管理</a ></li >
+            <li ><a href="{:U('admin/AdminMain')}" >信息管理</a ></li >
+        </ul >
+        <ul class="nav navbar-nav navbar-right" >
+            <li >
+                <div style="margin-top: 8px" >欢迎您，{{currentuser.role|converterRole}}:{{currentuser.name}}</div >
+            </li >
+            <li >
+                <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue" >
+                    <span class="glyphicon glyphicon-log-out" ></span > 注销
+                </button >
+            </li >
+        </ul >
+    </div >
+</nav >
 
-<div id="divApp">
-    <div style="margin-bottom: 15px">
+<div id="divApp" >
+    <div style="margin-bottom: 15px" >
         <button class="btn btn-primary" v-on:click="addTeacher"
-                style="height: 44px;text-align:right; display:inline; margin-left: 15px">
-            <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加教师
-        </button>
-    </div>
+                style="height: 44px;text-align:right; display:inline; margin-left: 15px" >
+            <span class="glyphicon glyphicon-plus" style="padding-right: 5px" ></span >添加教师
+        </button >
+    </div >
 
-    <div id="" class="container-fluid" style="margin-bottom: 15px">
-        <div class="panel panel-primary">
-            <div class="panel-heading panel-title">教师记录
-                <span class="badge" style="margin-left: 5px">{{records.length}}</span>
-            </div>
-            <div class="table-responsive">
+    <div id="" class="container-fluid" style="margin-bottom: 15px;margin-top: 20px" >
+        <div class="panel panel-primary" >
+            <div class="panel-heading panel-title" >教师记录
+                <span class="badge" style="margin-left: 5px" >{{records.length}}</span >
+            </div >
+            <div class="table-responsive" >
                 <table class="table table-bordered table-hover" align="center" v-show="records.length > 0"
-                       style="table-layout: fixed">
-                    <thead>
-                    <tr>
-                        <th>教师编号</th>
-                        <th>教师姓名</th>
-                        <th>系别</th>
-                        <th>电话</th>
-                        <th>Email</th>
-                        <th width="10%">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(record, index) in records">
-                        <td>{{record.id}}</td>
-                        <td>{{record.name}}</td>
-                        <td>{{record.department_name}}</td>
-                        <td>{{record.phone}}</td>
-                        <td>{{record.email}}</td>
-                        <td>
-
+                       style="table-layout: fixed" >
+                    <thead >
+                    <tr >
+                        <th >教师编号</th >
+                        <th >教师姓名</th >
+                        <th >系别</th >
+                        <th >电话</th >
+                        <th >Email</th >
+                        <th width="10%" >操作</th >
+                    </tr >
+                    </thead >
+                    <tbody >
+                    <tr v-for="(record, index) in records" >
+                        <td >{{record.id}}</td >
+                        <td >{{record.name}}</td >
+                        <td >{{record.department_name}}</td >
+                        <td >
+                            <div v-if="record.phone!=null" >
+                            {{record.phone}}
+                            </div >
+                            <div v-else >
+                            <b >无</b >
+                            </div >
+                        </td >
+                        <td >
+                            <div v-if="record.email!=null" >
+                            {{record.email}}
+                            </div >
+                            <div v-else >
+                            <b >无</b >
+                            </div >
+                        </td >
+                        <td >
                             <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
                                     data-toggle="tooltip" data-placement="top"
                                     title="删除"
                             >
-                                <span class="glyphicon glyphicon-minus-sign"></span>
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                                <span class="glyphicon glyphicon-minus-sign" ></span >
+                            </button >
+                        </td >
+                    </tr >
+                    </tbody >
+                </table >
+            </div >
             <p v-show="records.length == 0"
-               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">暂无教师记录~~~</p>
-        </div>
+               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray" >暂无记录,请添加~~~</p >
+        </div >
 
-    </div>
+    </div >
 
     <!--Add item modal-->
-    <div class="modal fade" id="addInfo" role="dialog">
-        <div class="modal-dialog">
+    <div class="modal fade" id="addInfo" role="dialog" >
+        <div class="modal-dialog" >
             <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header" style="padding:35px 50px;">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </button>
-                    <h2>添加教师</h2>
-                </div>
-                <div class="modal-body" style="padding:40px 50px;">
+            <div class="modal-content" >
+                <div class="modal-header" style="padding:35px 50px;" >
+                    <button type="button" class="close" data-dismiss="modal" >
+                        <span class="glyphicon glyphicon-remove" ></span >
+                    </button >
+                    <h2 >添加教师</h2 >
+                </div >
+                <div class="modal-body" style="padding:40px 50px;" >
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">教师编号:</label>
-                            <div class="col-sm-8">
+                    <form class="form-horizontal" role="form" >
+                        <div class="form-group" >
+                            <label class="control-label col-sm-3" >教师编号:</label >
+                            <div class="col-sm-8" >
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model="newInfoModel.id"
-                                       placeholder="输入教师编号"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">姓名:</label>
-                            <div class="col-sm-8">
+                                       placeholder="输入教师编号,格式为字母和数字如t0001" />
+                            </div >
+                        </div >
+                        <div class="form-group" >
+                            <label class="control-label col-sm-3" >姓名:</label >
+                            <div class="col-sm-8" >
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model="newInfoModel.name"
-                                       placeholder="输入姓名"/>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;">
+                                       placeholder="输入姓名" />
+                            </div >
+                        </div >
+                        <div class="form-group" >
+                            <label class="control-label col-sm-3" >系别:</label >
+                            <div class="col-sm-8" >
+                            <select v-model="newInfoModel.department_id" class="form-control" >
+                                <option v-for="type in departmentitems" v-bind:value="type.id" >
+                                    {{type.name}}
+                                </option >
+                            </select >
+                            </div >
+
+                        </div >
+                    </form >
+                    <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;" >
                         {{errorMsg}}!
-                    </div>
-                    <button type="button" style="margin-top: 5px;" class="btn btn-primary btn-block"
-                            v-on:click="onAddInfoData">确 定
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </div >
 
-    <div class="modal fade" id="deleteConfirmMsg" role="dialog">
-        <div class="modal-dialog">
+                    <button type="button" style="margin-top: 15px;" class="btn btn-success btn-block"
+                            v-on:click="onAddInfoData" >
+                        <span class="glyphicon glyphicon-saved" ></span > 确 定
+                    </button >
+                </div >
+            </div >
+        </div >
+    </div >
+
+    <div class="modal fade" id="deleteConfirmMsg" role="dialog" >
+        <div class="modal-dialog" >
             <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header" style="text-align: left">
-                    <h3>提示</h3>
-                </div>
-                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
+            <div class="modal-content" >
+                <div class="modal-header" style="text-align: left" >
+                    <h3 >提示</h3 >
+                </div >
+                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome" >
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的教师吗？
+                    确认要删除编号为<b >"{{selectInfo.id}}"</b >的教师吗？
                     <button type="button" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
-                            v-on:click="onConfirmDelete">确 定
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                            v-on:click="onConfirmDelete" >确 定
+                    </button >
+                </div >
+            </div >
+        </div >
+    </div >
 
 
-    <div class="modal fade" id="submitMsg" role="dialog">
-        <div class="modal-dialog">
+    <div class="modal fade" id="submitMsg" role="dialog" >
+        <div class="modal-dialog" >
             <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header" style="text-align: left">
-                    <h3>提示</h3>
-                </div>
-                <div class="modal-body" style="font-size: 20px">
+            <div class="modal-content" >
+                <div class="modal-header" style="text-align: left" >
+                    <h3 >提示</h3 >
+                </div >
+                <div class="modal-body" style="font-size: 20px" >
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
                     {{resultMsg}}!
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </div >
+            </div >
+        </div >
+    </div >
+</div >
 
-</body>
-</html>
-<script>
+</body >
+</html >
+<script >
     var appHeader = new Vue({
         el: '#divHeader',
         data: {
@@ -228,15 +255,16 @@
             newInfoModel: {
                 id: '',
                 name: '',
-                department: '',
+                department_id: '',
             },
+            departmentitems: [],
             selectInfo: {},
             records: [],
             resultMsg: '',
             errorMsg: '',
             isError: false,
-            deleteUrl: "{:U('admin/ajaxDelete')}",
-            addInfoUrl: "{:U('admin/ajaxAdd')}",
+            deleteUrl: "{:U('admin/ajaxDeleteTeacher')}",
+            addInfoUrl: "{:U('admin/ajaxAddTeacher')}",
 
         },
         methods: {
@@ -253,6 +281,10 @@
                     if (existId) {
                         this.isError = true;
                         this.errorMsg = '教师编号:' + this.newInfoModel.id + '已经存在，请重新录入编号';
+                    }
+                    else if (!regIsDigAlphabet(app.newInfoModel.id)) {
+                        this.isError = true;
+                        this.errorMsg = '教师编号格式为字母和数字,如 \"t0001\" ';
                     }
                 }
                 if (!this.isError && isStringEmpty(this.newInfoModel.name)) {
@@ -324,7 +356,11 @@
         ,
         created: function () {
             this.records = JSON.parse('{$records}');
+            this.departmentitems = JSON.parse('{$department_items}');
+            if (this.departmentitems.length > 0) {
+                this.newInfoModel.department_id = this.departmentitems[0].id;
+            }
         }
         ,
     })
-</script>
+</script >

@@ -53,15 +53,17 @@ class AdminController extends BaseLoginController
         }
     }
 
+    #region #teacher data
     public function teacherManage()
     {
         $result = D("teacher")->getRecords();
         $this->assign("records", json_encode($result));
         $this->assignUser();
+        $this->getDepartments();
         $this->display();
     }
 
-    public function ajaxDelete()
+    public function ajaxDeleteTeacher()
     {
         $condition['id'] = $_POST['id'];
         if ($condition['id']) {
@@ -74,15 +76,95 @@ class AdminController extends BaseLoginController
         }
     }
 
-    public function ajaxAdd()
+    public function ajaxAddTeacher()
     {
-        $data['id'] = $_POST['id'];
-        $data['name'] = $_POST['name'];
-        $result = D("teacher")->add($data);
+        $result = D("teacher")->addInfo($_POST);
         if ($result) {
             $this->success(true);
         } else {
             $this->error(false);
         }
     }
+    #endregion
+
+    #region #student data
+    function getDepartments()
+    {
+        $result = D("department")->getDepartments();
+        $this->assign("department_items", json_encode($result));
+    }
+
+    function getProfessions()
+    {
+        $result = D("profession")->getProfessions();
+        $this->assign("profession_items", json_encode($result));
+    }
+
+    public function studentManage()
+    {
+        $result = D("student")->getRecords();
+        $this->assign("records", json_encode($result));
+        $this->assignUser();
+        $this->getDepartments();
+        $this->getProfessions();
+        $this->display();
+    }
+
+    public function ajaxAddStudent()
+    {
+        $result = D("student")->addInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+
+    public function ajaxDeleteStudent()
+    {
+        $condition['id'] = $_POST['id'];
+        if ($condition['id']) {
+            $result = D("student")->deleteRecord($condition);
+        }
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+    #endregion
+
+    #region #building data
+    public function buildingManage()
+    {
+        $result = D("building")->getRecords();
+        $this->assign("records", json_encode($result));
+        $this->assignUser();
+        $this->display();
+    }
+
+    public function ajaxAddBuilding()
+    {
+        $result = D("building")->addInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+
+    public function ajaxDeleteBuilding()
+    {
+        $condition['id'] = $_POST['id'];
+        if ($condition['id']) {
+            $result = D("building")->deleteRecord($condition);
+        }
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+    #endregion
+
 }

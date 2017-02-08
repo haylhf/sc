@@ -45,7 +45,9 @@ class TeacherModel extends Model
     {
         $data['id'] = $info['id'];
         $data['name'] = $info['name'];
-
+        $data['department_id']=$info['department_id'];
+        $util = new Util();
+        $data['password'] = $util->getEncryptCode($info['id']);
 //        $sql = M('teacher')->fetchSql(true)->data($data)->add();
 //        echo $sql;
         $result = M('teacher')->data($data)->add();
