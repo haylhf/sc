@@ -13,6 +13,7 @@
     <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+
     <style>
         table thead tr th {
             text-align: center;
@@ -40,9 +41,9 @@
 
         <ul class="nav navbar-nav">
             <li><a href="{:U('admin/TeacherManage')}">教师管理</a></li>
-            <li class="active"><a href="#">学生管理</a></li>
+            <li><a href="{:U('admin/StudentManage')}">学生管理</a></li>
             <li><a href="{:U('admin/BuildingManage')}">教学楼管理</a></li>
-            <li ><a href="{:U('admin/CourseManage')}" >课程管理</a ></li >
+            <li class="active"><a href="#">课程管理</a></li>
             <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -64,15 +65,15 @@
 
 <div id="divApp">
     <div style="margin-bottom: 15px">
-        <button class="btn btn-primary" v-on:click="addTeacher"
+        <button class="btn btn-primary" v-on:click="addCourse"
                 style="height: 44px;text-align:right; display:inline; margin-left: 15px">
-            <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加学生
+            <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加课程
         </button>
     </div>
 
-    <div id="" class="container-fluid" style="margin-bottom: 15px; margin-top: 20px">
+    <div id="" class="container-fluid" style="margin-bottom: 15px;margin-top: 20px">
         <div class="panel panel-primary">
-            <div class="panel-heading panel-title">学生记录
+            <div class="panel-heading panel-title">课程记录
                 <span class="badge" style="margin-left: 5px">{{records.length}}</span>
             </div>
             <div class="table-responsive">
@@ -80,13 +81,11 @@
                        style="table-layout: fixed">
                     <thead>
                     <tr>
-                        <th>学号</th>
-                        <th>姓名</th>
-                        <th>系别</th>
-                        <th>专业</th>
-                        <th>班级</th>
-                        <th>电话</th>
-                        <th>Email</th>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>课程属性</th>
+                        <th>课程类别</th>
+                        <th>学分</th>
                         <th width="10%">操作</th>
                     </tr>
                     </thead>
@@ -94,25 +93,10 @@
                     <tr v-for="(record, index) in records">
                         <td>{{record.id}}</td>
                         <td>{{record.name}}</td>
-                        <td>{{record.department_name}}</td>
-                        <td>{{record.profession_name}}</td>
-                        <td>{{record.class|convertClass}}</td>
-                        <td>
-                            <div v-if="record.phone!=null">
-                                {{record.phone}}
-                            </div>
-                            <div v-else>
-                                <b>无</b>
-                            </div>
-                        </td>
-                        <td>
-                            <div v-if="record.email!=null">
-                                {{record.email}}
-                            </div>
-                            <div v-else>
-                                <b>无</b>
-                            </div>
-                        </td>
+                        <td>{{record.course_property|converterCourseProperty}}</td>
+                        <td>{{record.course_type|converterCourseType}}</td>
+                        <td>{{record.course_credit}}</td>
+
                         <td>
                             <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
                                     data-toggle="tooltip" data-placement="top"
@@ -141,73 +125,56 @@
                     <button type="button" class="close" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
                     </button>
-                    <h2>添加学生</h2>
+                    <h2>添加教学楼</h2>
                 </div>
                 <div class="modal-body" style="padding:40px 50px;">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label class="control-label col-sm-3">学号:</label>
+                            <label class="control-label col-sm-3">课程编号:</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model="newInfoModel.id"
-                                       placeholder="输入学号,格式为字母和数字如 s0001 "/>
+                                       placeholder="课程编号,格式为字母和数字如 c0001"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">姓名:</label>
+                            <label class="control-label col-sm-3">课程名称:</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model="newInfoModel.name"
-                                       placeholder="输入姓名"/>
+                                       placeholder="课程名称"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-3">系别:</label>
+                            <label class="control-label col-sm-3">课程属性:</label>
                             <div class="col-sm-8">
-                                <select v-model="newInfoModel.department_id" class="form-control">
-                                    <option v-for="type in departmentitems" v-bind:value="type.id">
-                                        {{type.name}}
-                                    </option>
-                                </select>
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">专业:</label>
-                            <div class="col-sm-8">
-                                <select v-model="newInfoModel.profession_id" class="form-control">
-                                    <option v-for="type in professionitems" v-bind:value="type.id">
-                                        {{type.name}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-3">班级:</label>
-                            <div class="col-sm-8">
-                                <select v-model="newInfoModel.class" class="form-control">
-                                    <option v-for="type in classItems" v-bind:value="type.value">
+                                <select v-model="newInfoModel.course_property" class="form-control">
+                                    <option v-for="type in course_propertyItems" v-bind:value="type.value">
                                         {{type.text}}
                                     </option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="control-label col-sm-3">性别:</label>
-                            <div class="col-sm-8" style="margin-top: 5px;">
-                                <label for="male">
-                                    <input id="male" type="radio" name="role" value="0" v-model="newInfoModel.isMale"/>
-                                    男</label>
-                                &nbsp;&nbsp;
-                                <label for="famale">
-                                    <input id="famale" type="radio" name="role" value="1"
-                                           v-model="newInfoModel.isMale"/>
-                                    女</label>
+                            <label class="control-label col-sm-3">课程类别:</label>
+                            <div class="col-sm-8">
+                                <select v-model="newInfoModel.course_type" class="form-control">
+                                    <option v-for="type in course_typeItems" v-bind:value="type.value">
+                                        {{type.text}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">学分:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control"
+                                       v-on:keyup="onKeyUp"
+                                       v-model="newInfoModel.course_credit"
+                                       placeholder="输入学分"/>
                             </div>
                         </div>
 
@@ -215,9 +182,10 @@
                     <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;">
                         {{errorMsg}}!
                     </div>
+
                     <button type="button" style="margin-top: 15px;" class="btn btn-success btn-block"
                             v-on:click="onAddInfoData">
-                        <span class="glyphicon glyphicon-saved"></span>确 定
+                        <span class="glyphicon glyphicon-saved"></span> 确 定
                     </button>
                 </div>
             </div>
@@ -233,7 +201,7 @@
                 </div>
                 <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的学生吗？
+                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的课程吗？
                     <button type="button" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
                             v-on:click="onConfirmDelete">确 定
                     </button>
@@ -262,7 +230,6 @@
 </body>
 </html>
 <script>
-
     var appHeader = new Vue({
         el: '#divHeader',
         data: {
@@ -294,45 +261,40 @@
         },
     });
 
-
     var app = new Vue({
         el: '#divApp',
         data: {
             newInfoModel: {
                 id: '',
                 name: '',
-                department_id: '',
-                profession_id: '',
-                isMale: 0,
-                class: 1,
+                course_property: 0,
+                course_type: 0,
+                course_credit: 2,
             },
-
-            departmentitems: [],
-            professionitems: [],
-            classItems: [],
             selectInfo: {},
             records: [],
             resultMsg: '',
             errorMsg: '',
             isError: false,
-            deleteUrl: "{:U('admin/ajaxDeleteStudent')}",
-            addInfoUrl: "{:U('admin/ajaxAddStudent')}",
-
+            deleteUrl: "{:U('admin/ajaxDeleteCourse')}",
+            addInfoUrl: "{:U('admin/ajaxAddCourse')}",
+            course_propertyItems: [],
+            course_typeItems: [],
         },
         filters: {
-            convertClass: function (num) {
-                return getUpperStringNumber(num) + '班';
+            converterCourseProperty: function (num) {
+                return getCoursePropertyName(num);
+            },
+            converterCourseType: function (num) {
+                return getCourseTypeName(num);
             },
         },
         methods: {
-            checkMale: function (isMale) {
-                return parseInt(isMale) == 0 ? 'checked' : '';
-            },
             verifyForm: function () {
                 this.isError = false;
                 if (isStringEmpty(this.newInfoModel.id)) {
                     this.isError = true;
-                    this.errorMsg = '学号不能为空';
+                    this.errorMsg = '课程编号不能为空';
                 }
                 else {
                     var existId = this.records.find(function (item) {
@@ -340,23 +302,23 @@
                     });
                     if (existId) {
                         this.isError = true;
-                        this.errorMsg = '学号:' + this.newInfoModel.id + '已经存在，请重新录入编号';
+                        this.errorMsg = '课程编号:' + this.newInfoModel.id + '已经存在，请重新录入编号';
                     }
                     else if (!regIsDigAlphabet(app.newInfoModel.id)) {
                         this.isError = true;
-                        this.errorMsg = '学号格式为字母和数字,如 \"s0001\" ';
+                        this.errorMsg = '课程编号格式为字母和数字,如 \"c0001\" ';
                     }
                 }
                 if (!this.isError && isStringEmpty(this.newInfoModel.name)) {
                     this.isError = true;
-                    this.errorMsg = '姓名不能为空';
+                    this.errorMsg = '课程名不能为空';
                 }
             },
 
             onKeyUp: function () {
                 this.verifyForm();
             },
-            addTeacher: function () {
+            addCourse: function () {
                 $("#addInfo").modal();
             }
             ,
@@ -370,12 +332,12 @@
                         data: this.newInfoModel,
                         success: function (result) {
                             $("#addInfo").modal('hide');
-                          if (result.status) {
-                              document.location.reload();
-                          } else {
-                              app.resultMsg = '添加失败';
-                              $("#submitMsg").modal();
-                          }
+                            if (result.status) {
+                                document.location.reload();
+                            } else {
+                                app.resultMsg = '添加失败';
+                                $("#submitMsg").modal();
+                            }
                         },
                         error: function (data) {
                             $("#addInfo").modal('hide');
@@ -391,7 +353,8 @@
                 if (this.selectInfo) {
                     $("#deleteConfirmMsg").modal();
                 }
-            },
+            }
+            ,
 
             onConfirmDelete: function () {
                 $("#deleteConfirmMsg").modal('hide');
@@ -402,7 +365,7 @@
                     data: this.selectInfo,
                     success: function (result) {
                         var index = app.records.indexOf(app.selectInfo);
-                        app.records.splice(index, 1);
+                        app.records.splice(index, 1);//remove the item
 //                        if (result.status) {
 //                            document.location.reload();
 //                        }
@@ -411,25 +374,23 @@
                     },
                 })
             }
-        },
+        }
+        ,
         created: function () {
-
             this.records = JSON.parse('{$records}');
-            this.departmentitems = JSON.parse('{$department_items}');
-            this.professionitems = JSON.parse('{$profession_items}');
-            if (this.departmentitems.length > 0) {
-                this.newInfoModel.department_id = this.departmentitems[0].id;
-            }
-            if (this.professionitems.length > 0) {
-                this.newInfoModel.profession_id = this.professionitems[0].id;
-            }
-            for (var i = 0; i < 5; i++) {
-                this.classItems[i] = {
-                    text: getUpperStringNumber(i + 1) + '班',
-                    value: i + 1,
+            for (var i = 0; i < 4; i++) {
+                this.course_propertyItems[i] = {
+                    text: getCoursePropertyName(i),
+                    value: i,
                 };
             }
-        },
+            for (var i = 0; i < 2; i++) {
+                this.course_typeItems[i] = {
+                    text: getCourseTypeName(i),
+                    value: i,
+                };
+            }
+        }
+        ,
     })
-
 </script>

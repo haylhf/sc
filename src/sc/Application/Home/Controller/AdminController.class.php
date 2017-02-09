@@ -167,4 +167,37 @@ class AdminController extends BaseLoginController
     }
     #endregion
 
+    #region #Course data
+    public function courseManage()
+    {
+        $result = D("course")->getRecords();
+        $this->assign("records", json_encode($result));
+        $this->assignUser();
+        $this->display();
+    }
+
+    public function ajaxAddCourse()
+    {
+        $result = D("course")->addInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+
+    public function ajaxDeleteCourse()
+    {
+        $condition['id'] = $_POST['id'];
+        if ($condition['id']) {
+            $result = D("course")->deleteRecord($condition);
+        }
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+    #endregion
+
 }

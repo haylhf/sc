@@ -16,11 +16,24 @@ class TeacherModel extends Model
         return $list;
     }
 
+    public function modifyInfo($infoData)
+    {
+        $util = new Util();
+        $data['password'] = $util->getEncryptCode($infoData['password']);
+        $data['id'] = $infoData['id'];
+        $result = M('teacher')->data($data)->save();
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
+
     public function getRecords($condition = null)
     {
         $data = null;
-        if ($condition['id']) {
-            $data['id'] = $condition['id'];
+        $id = $condition['id'];
+        if ($id) {
+            $data = "t.id='$id' ";
         }
         $list = M('teacher')
             ->alias("t")
@@ -45,7 +58,7 @@ class TeacherModel extends Model
     {
         $data['id'] = $info['id'];
         $data['name'] = $info['name'];
-        $data['department_id']=$info['department_id'];
+        $data['department_id'] = $info['department_id'];
         $util = new Util();
         $data['password'] = $util->getEncryptCode($info['id']);
 //        $sql = M('teacher')->fetchSql(true)->data($data)->add();

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2017-02-09 00:35:53
+Date: 2017-02-09 23:40:21
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -55,7 +55,7 @@ INSERT INTO `sc_building` VALUES ('b0004', '教研楼302');
 DROP TABLE IF EXISTS `sc_course`;
 CREATE TABLE `sc_course` (
   `id` varchar(50) NOT NULL,
-  `course_name` varchar(50) NOT NULL COMMENT '课程名',
+  `name` varchar(50) NOT NULL COMMENT '课程名',
   `course_property` tinyint(4) NOT NULL COMMENT '课程属性',
   `course_type` tinyint(4) NOT NULL COMMENT '课程类型',
   `course_credit` tinyint(4) NOT NULL COMMENT '学分',
@@ -66,10 +66,10 @@ CREATE TABLE `sc_course` (
 -- Records of sc_course
 -- ----------------------------
 INSERT INTO `sc_course` VALUES ('c0001', '计算机基础', '0', '0', '2');
-INSERT INTO `sc_course` VALUES ('c0002', '大学英语', '0', '0', '4');
-INSERT INTO `sc_course` VALUES ('c0003', '高等数学', '0', '0', '4');
-INSERT INTO `sc_course` VALUES ('c0004', '思想道德修养与法律基础', '0', '0', '3');
-INSERT INTO `sc_course` VALUES ('c0005', '程序设计基础', '0', '0', '2');
+INSERT INTO `sc_course` VALUES ('c0002', '大学英语', '3', '0', '4');
+INSERT INTO `sc_course` VALUES ('c0003', '高等数学', '1', '0', '4');
+INSERT INTO `sc_course` VALUES ('c0004', '思想道德修养与法律基础', '2', '1', '3');
+INSERT INTO `sc_course` VALUES ('c0005', '程序设计基础', '2', '1', '2');
 INSERT INTO `sc_course` VALUES ('c0006', '马克思主义基本原理概论', '0', '0', '2');
 
 -- ----------------------------
@@ -209,10 +209,10 @@ CREATE TABLE `sc_teacher` (
 -- ----------------------------
 -- Records of sc_teacher
 -- ----------------------------
-INSERT INTO `sc_teacher` VALUES ('t0001', ' 马云', 'd0001', '1', 'e10adc3949ba59abbe56e057f20f883e', 'mayun@163.com', '13567890987');
-INSERT INTO `sc_teacher` VALUES ('t0002', ' 王明', 'd0003', '1', 'e10adc3949ba59abbe56e057f20f883e', 'wm@qq.com', '12345678901');
-INSERT INTO `sc_teacher` VALUES ('t0004', 'Jay', 'd0003', '0', 'e10adc3949ba59abbe56e057f20f883e', null, null);
-INSERT INTO `sc_teacher` VALUES ('t0005', 'HL', 'd0001', '0', 'e10adc3949ba59abbe56e057f20f883e', null, null);
+INSERT INTO `sc_teacher` VALUES ('t0001', ' 马云', 'd0001', '1', '947e9e30afc66a238e1d4d893e424ea0649f5351', 'mayun@163.com', '13567890987');
+INSERT INTO `sc_teacher` VALUES ('t0002', ' 王明', 'd0003', '1', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', 'wm@qq.com', '12345678901');
+INSERT INTO `sc_teacher` VALUES ('t0004', 'dfds', 'd0003', '0', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', null, null);
+INSERT INTO `sc_teacher` VALUES ('t0005', 'HL', 'd0001', '0', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', null, null);
 INSERT INTO `sc_teacher` VALUES ('t0010', 'GN', 'd0001', '0', '413d6c847f29deffbc00853decd85ddb174ee036', null, null);
 
 -- ----------------------------

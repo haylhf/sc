@@ -30,11 +30,8 @@
         </div >
 
         <ul class="nav navbar-nav" >
-            <li ><a href="{:U('admin/TeacherManage')}" >教师管理</a ></li >
-            <li ><a href="{:U('admin/StudentManage')}" >学生管理</a ></li >
-            <li ><a href="{:U('admin/BuildingManage')}" >教学楼管理</a ></li >
-            <li ><a href="{:U('admin/CourseManage')}" >课程管理</a ></li >
-            <li class="active" ><a href="#" >信息管理</a ></li >
+            <li class="active" ><a href="#" >课程管理</a ></li >
+            <li ><a href="{:U('teacher/index')}" >信息管理</a ></li >
         </ul >
         <ul class="nav navbar-nav navbar-right" >
             <li>
@@ -53,63 +50,6 @@
     </div >
 </nav >
 <div class="container-fluid" id="divApp" >
-    <div class="panel panel-primary" >
-        <div class="panel-heading" >
-            <div style="font-size: 20px;text-align: left" >
-                修改密码
-            </div >
-        </div >
-        <div class="table-responsive" style="text-align: center;margin:20px;" >
-            <form class="form-horizontal" role="form"
-                  style="margin-top: 30px; margin-right: 20px; font-size: 16px" >
-                <div class="form-group" >
-                    <label class="control-label col-sm-1" >用户名:</label >
-                    <div class="col-sm-4" >
-                        <input type="text" disabled="true" class="form-control"
-                               v-model="submitData.name"
-                               style="height: 36px;" />
-
-                    </div >
-                </div >
-                <div class="form-group" >
-                    <label class="control-label col-sm-1" >原密码:</label >
-                    <div class="col-sm-4" >
-                        <input type="password" class="form-control" v-model="submitData.oldPwd" placeholder="原密码"
-                               v-on:keyup="onKeyUp"
-                               style="height: 36px;float:right;" />
-                    </div >
-                </div >
-                <div class="form-group" >
-                    <label class="control-label col-sm-1" >新密码:</label >
-                    <div class="col-sm-4" >
-                        <input type="password" class="form-control" v-model="submitData.newPwd" placeholder="新密码"
-                               v-on:keyup="onKeyUp"
-                               style="height: 36px;float:right;" />
-                    </div >
-                </div >
-                <div class="form-group" >
-                    <label class="control-label col-sm-1" >确认新密码:</label >
-                    <div class="col-sm-4" >
-                        <input type="password" class="form-control" v-model="submitData.confirmNewPwd"
-                               placeholder="确认新密码"
-                               v-on:keyup="onKeyUp"
-                               style="height: 36px;float:right;" />
-                    </div >
-                </div >
-                <div class="col-sm-offset-2 col-sm-3"
-                     style="text-align: right;margin-top:20px;margin-bottom:20px;" >
-                    <button type="button" class="btn btn-primary" v-on:click="submit"
-                            style="width: 100px; height: 36px" >
-                        提交
-                    </button >
-                </div >
-            </form >
-        </div >
-        <div class="alert alert-danger" v-if="isError" >
-            {{errorMsg}}!
-        </div >
-    </div >
-
     <div class="modal fade" id="submitMsg" role="dialog" >
         <div class="modal-dialog" >
             <!-- Modal content-->
@@ -131,7 +71,7 @@
 <script >
     $(function () {
         $('#submitMsg').on('hidden.bs.modal', function () {
-            window.location.href = "{:U('admin/adminMain')}";
+            window.location.href = "{:U('teacher/index')}";
 
         })
     });
@@ -139,7 +79,7 @@
         el: '#divHeader',
         data: {
             currentuser: {},
-            submitUrl: "{:U('admin/ajaxLogout')}",
+            submitUrl: "{:U('teacher/ajaxLogout')}",
         },
         methods: {
             logout: function () {
@@ -150,7 +90,7 @@
 //                    data: '',
                     success: function (result) {
                         if (result.status) {
-                            window.location.href = "{:U('admin/index')}";
+                            window.location.href = "{:U('index/index')}";
                         }
                         else {
 
@@ -175,7 +115,7 @@
         data: {
             isError: false,
             errorMsg: '',
-            submitUrl: "{:U('admin/ajaxModify')}",
+            submitUrl: "{:U('teacher/ajaxModify')}",
             submitData: {
                 id: '',
                 name: '',
@@ -216,7 +156,7 @@
                             app.isError = data.status == 0;
                             if (!app.isError) {
                                 $("#submitMsg").modal();
-                                //window.location.href = "{:U('admin/adminMain')}";
+                                //window.location.href = "{:U('admin/index')}";
                             }
                             else {
                                 app.errorMsg = '请输入正确的原密码';
@@ -228,7 +168,7 @@
         },
 
         created: function () {
-            var user = JSON.parse('{$adminUser}');
+            var user = JSON.parse('{$teacherUser}');
             if (user) {
                 this.submitData.name = user.name;
                 this.submitData.id = user.id;

@@ -15,9 +15,9 @@
     <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
     <style >
         body {
-            text-align: center;
-            vertical-align: middle;
-            font-size: 16px;
+          text-align: center;
+          vertical-align: middle;
+          font-size: 16px;
         }
 
     </style >
@@ -30,10 +30,7 @@
         </div >
 
         <ul class="nav navbar-nav" >
-            <li ><a href="{:U('admin/TeacherManage')}" >教师管理</a ></li >
-            <li ><a href="{:U('admin/StudentManage')}" >学生管理</a ></li >
-            <li ><a href="{:U('admin/BuildingManage')}" >教学楼管理</a ></li >
-            <li ><a href="{:U('admin/CourseManage')}" >课程管理</a ></li >
+            <li ><a href="{:U('teacher/TeacherCourse')}" >课程管理</a ></li >
             <li class="active" ><a href="#" >信息管理</a ></li >
         </ul >
         <ul class="nav navbar-nav navbar-right" >
@@ -56,7 +53,7 @@
     <div class="panel panel-primary" >
         <div class="panel-heading" >
             <div style="font-size: 20px;text-align: left" >
-                修改密码
+                用户信息
             </div >
         </div >
         <div class="table-responsive" style="text-align: center;margin:20px;" >
@@ -130,110 +127,110 @@
 
 <script >
     $(function () {
-        $('#submitMsg').on('hidden.bs.modal', function () {
-            window.location.href = "{:U('admin/adminMain')}";
+      $('#submitMsg').on('hidden.bs.modal', function () {
+        window.location.href = "{:U('teacher/index')}";
 
-        })
+      })
     });
     var appHeader = new Vue({
-        el: '#divHeader',
-        data: {
-            currentuser: {},
-            submitUrl: "{:U('admin/ajaxLogout')}",
-        },
-        methods: {
-            logout: function () {
-                $.ajax({
-                    url: this.submitUrl,
-                    type: 'POST',
-                    dataType: 'json',
+      el: '#divHeader',
+      data: {
+        currentuser: {},
+        submitUrl: "{:U('teacher/ajaxLogout')}",
+      },
+      methods: {
+        logout: function () {
+          $.ajax({
+            url: this.submitUrl,
+            type: 'POST',
+            dataType: 'json',
 //                    data: '',
-                    success: function (result) {
-                        if (result.status) {
-                            window.location.href = "{:U('admin/index')}";
-                        }
-                        else {
+            success: function (result) {
+              if (result.status) {
+                window.location.href = "{:U('index/index')}";
+              }
+              else {
 
-                        }
-                    },
-                })
+              }
             },
+          })
         },
-        created: function () {
-            this.currentuser = JSON.parse('{$currentuser}');
-        },
-        filters: {
-            converterRole: function (role) {
-                return getRoleName(role);
-            }
-        },
+      },
+      created: function () {
+        this.currentuser = JSON.parse('{$currentuser}');
+      },
+      filters: {
+        converterRole: function (role) {
+          return getRoleName(role);
+        }
+      },
     });
 
 
     var app = new Vue({
-        el: '#divApp',
-        data: {
-            isError: false,
-            errorMsg: '',
-            submitUrl: "{:U('admin/ajaxModify')}",
-            submitData: {
-                id: '',
-                name: '',
-                oldPwd: '',
-                newPwd: '',
-                confirmNewPwd: '',
-            },
+      el: '#divApp',
+      data: {
+        isError: false,
+        errorMsg: '',
+        submitUrl: "{:U('teacher/ajaxModify')}",
+        submitData: {
+          id: '',
+          name: '',
+          oldPwd: '',
+          newPwd: '',
+          confirmNewPwd: '',
         },
-        methods: {
-            onKeyUp: function () {
-                this.verifyPwd();
-            },
-            verifyPwd: function () {
-                this.isError = false;
-                if (isStringEmpty(this.submitData.newPwd)) {
-                    this.isError = true;
-                    this.errorMsg = '新密码不能为空';
-                } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
-                    this.isError = true;
-                    this.errorMsg = '新密码和确认新密码不一致';
-                }
-
-                if (isStringEmpty(this.submitData.oldPwd)) {
-                    this.isError = true;
-                    this.errorMsg = '请输入正确的原密码';
-                }
-
-            },
-            submit: function () {
-                this.verifyPwd();
-                if (!this.isError) {
-                    $.ajax({
-                        url: this.submitUrl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: this.submitData,
-                        success: function (data) {
-                            app.isError = data.status == 0;
-                            if (!app.isError) {
-                                $("#submitMsg").modal();
-                                //window.location.href = "{:U('admin/adminMain')}";
-                            }
-                            else {
-                                app.errorMsg = '请输入正确的原密码';
-                            }
-                        },
-                    })
-                }
-            },
+      },
+      methods: {
+        onKeyUp: function () {
+          this.verifyPwd();
         },
+        verifyPwd: function () {
+          this.isError = false;
+          if (isStringEmpty(this.submitData.newPwd)) {
+            this.isError = true;
+            this.errorMsg = '新密码不能为空';
+          } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
+            this.isError = true;
+            this.errorMsg = '新密码和确认新密码不一致';
+          }
 
-        created: function () {
-            var user = JSON.parse('{$adminUser}');
-            if (user) {
-                this.submitData.name = user.name;
-                this.submitData.id = user.id;
-            }
+          if (isStringEmpty(this.submitData.oldPwd)) {
+            this.isError = true;
+            this.errorMsg = '请输入正确的原密码';
+          }
 
         },
+        submit: function () {
+          this.verifyPwd();
+          if (!this.isError) {
+            $.ajax({
+              url: this.submitUrl,
+              type: 'POST',
+              dataType: 'json',
+              data: this.submitData,
+              success: function (data) {
+                app.isError = data.status == 0;
+                if (!app.isError) {
+                  $("#submitMsg").modal();
+                  //window.location.href = "{:U('admin/index')}";
+                }
+                else {
+                  app.errorMsg = '请输入正确的原密码';
+                }
+              },
+            })
+          }
+        },
+      },
+
+      created: function () {
+        var user = JSON.parse('{$teacherUser}');
+        if (user) {
+          this.submitData.name = user.name;
+          this.submitData.id = user.id;
+        }
+
+      },
     })
 </script >

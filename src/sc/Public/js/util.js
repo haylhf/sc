@@ -9,17 +9,18 @@ function isStringEmpty(data) {
 }
 
 function getRoleName(role) {
-    var name = '管理员';
+    var name = '';
     switch (parseInt(role)) {
 
         case 1://teacher
-            name = '学生';
+            name = '教师';
             break;
         case 2://student
-            name = '教师';
+            name = '学生';
             break;
         case 0://admin
         default:
+            name = '管理员'
             break;
 
     }
@@ -62,7 +63,44 @@ function getUpperStringNumber(num) {
         case 9:
             result = '九';
             break;
+        default:
+            break;
 
+    }
+    return result;
+}
+
+function getCoursePropertyName(cType) {
+    var result = '';
+    switch (parseInt(cType)) {
+        case 1:
+            result = '专业课';
+            break;
+        case 2:
+            result = '专业选修课';
+            break;
+        case 3:
+            result = '统考课程';
+            break;
+        case 0:
+        default:
+            result = '公共基础课';
+            break;
+    }
+    return result;
+}
+
+
+function getCourseTypeName(cType) {
+    var result = '';
+    switch (parseInt(cType)) {
+        case 1:
+            result = '选修课';
+            break;
+        case 0:
+        default:
+            result = '必修课';
+            break;
     }
     return result;
 }
