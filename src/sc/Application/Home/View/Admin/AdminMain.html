@@ -66,7 +66,7 @@
                     <label class="control-label col-sm-1" >用户名:</label >
                     <div class="col-sm-4" >
                         <input type="text" disabled="true" class="form-control"
-                               v-model="submitData.name"
+                               v-model.trim="submitData.name"
                                style="height: 36px;" />
 
                     </div >
@@ -131,8 +131,8 @@
 <script >
     $(function () {
         $('#submitMsg').on('hidden.bs.modal', function () {
-            window.location.href = "{:U('admin/adminMain')}";
-
+            //window.location.href = "{:U('admin/adminMain')}";
+            document.location.reload();
         })
     });
     var appHeader = new Vue({

@@ -18,11 +18,25 @@ class TeacherModel extends Model
 
     public function modifyInfo($infoData)
     {
-        $util = new Util();
-        $data['password'] = $util->getEncryptCode($infoData['password']);
+        if ($infoData['password']) {
+            $util = new Util();
+            $data['password'] = $util->getEncryptCode($infoData['password']);
+        }
+        if ($infoData['name']) {
+            $data['name'] = $infoData['name'];
+        }
+        if (isset($infoData['sex'])) {
+            $data['sex'] = $infoData['sex'];
+        }
+        if ($infoData['email']) {
+            $data['email'] = $infoData['email'];
+        }
+        if ($infoData['phone']) {
+            $data['phone'] = $infoData['phone'];
+        }
         $data['id'] = $infoData['id'];
         $result = M('teacher')->data($data)->save();
-        if ($result) {
+        if ($result >= 0) {
             return true;
         }
         return false;

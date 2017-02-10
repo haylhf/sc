@@ -27,12 +27,6 @@ function getRoleName(role) {
     return name;
 }
 
-//判断是否是字母和数字的组合
-function regIsDigAlphabet(fData) {
-    var reg = new RegExp("^([A-Za-z]{1})[0-9]+$");
-    return (reg.test(fData));
-}
-
 function getUpperStringNumber(num) {
     var result = '一';
     switch (parseInt(num)) {
@@ -103,4 +97,23 @@ function getCourseTypeName(cType) {
             break;
     }
     return result;
+}
+
+//验证Email是否正确
+function regIsEmail(fData) {
+    var reg =  new RegExp("^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$");
+    return reg.test(fData);
+}
+
+//判断手机号是否正确
+function regIsPhone(fData) {
+    var reg =  /^1\d{10}$/;
+    return reg.test(fData);
+}
+
+
+//判断是否是字母和数字的组合
+function regIsDigAlphabet(fData) {
+    var reg = new RegExp("^([A-Za-z]{1})[0-9]+$");
+    return (reg.test(fData));
 }

@@ -37,7 +37,7 @@ class TeacherController extends BaseLoginController
         $this->display();
     }
 
-    public function ajaxModify()
+    public function ajaxModifyPwd()
     {
         $result = null;
         $data['name'] = $_POST['name'];
@@ -50,6 +50,18 @@ class TeacherController extends BaseLoginController
             $result = D("teacher")->modifyInfo($data);
         }
 
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error('error');
+        }
+    }
+
+
+    public function ajaxModifyInfo()
+    {
+        $result = null;
+        $result = D("teacher")->modifyInfo($_POST);
         if ($result) {
             $this->success(true);
         } else {

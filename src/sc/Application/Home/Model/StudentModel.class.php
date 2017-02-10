@@ -15,6 +15,32 @@ class StudentModel extends Model
         return $list;
     }
 
+    public function modifyInfo($infoData)
+    {
+        if ($infoData['password']) {
+            $util = new Util();
+            $data['password'] = $util->getEncryptCode($infoData['password']);
+        }
+        if ($infoData['name']) {
+            $data['name'] = $infoData['name'];
+        }
+        if ($infoData['sex']) {
+            $data['sex'] = $infoData['sex'];
+        }
+        if ($infoData['email']) {
+            $data['email'] = $infoData['email'];
+        }
+        if ($infoData['phone']) {
+            $data['phone'] = $infoData['phone'];
+        }
+        $data['id'] = $infoData['id'];
+        $result = M('student')->data($data)->save();
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
+
     public function getRecords($condition = null)
     {
         $data = null;
