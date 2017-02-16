@@ -39,6 +39,7 @@
         </div>
 
         <ul class="nav navbar-nav">
+            <li ><a href="{:U('admin/ProfessionManage')}" >专业管理</a ></li >
             <li><a href="{:U('admin/TeacherManage')}">教师管理</a></li>
             <li class="active"><a href="#">学生管理</a></li>
             <li><a href="{:U('admin/BuildingManage')}">教学楼管理</a></li>
@@ -262,6 +263,16 @@
 </body>
 </html>
 <script>
+    $(function () {
+        $('#addInfo').on('hidden.bs.modal', function () {
+            //document.getElementById('dataForm').reset();
+            app.newInfoModel.id = '';
+            app.newInfoModel.name = '';
+            app.newInfoModel.course_credit = 2;
+
+            app.isError = false;
+        })
+    });
 
     var appHeader = new Vue({
         el: '#divHeader',

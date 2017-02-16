@@ -43,9 +43,10 @@ class StudentModel extends Model
 
     public function getRecords($condition = null)
     {
-        $data = null;
-        if ($condition['id']) {
-            $data['id'] = $condition['id'];
+        $data = " 1 ";
+        $id = $condition['id'];
+        if ($id) {
+            $data .= " AND t.id='$id' ";
         }
         $list = M('student')
             ->alias("t")

@@ -40,10 +40,11 @@
         </div>
 
         <ul class="nav navbar-nav">
+            <li ><a href="{:U('admin/ProfessionManage')}" >专业管理</a ></li >
             <li><a href="{:U('admin/TeacherManage')}">教师管理</a></li>
             <li><a href="{:U('admin/StudentManage')}">学生管理</a></li>
             <li class="active"><a href="#">教学楼管理</a></li>
-            <li ><a href="{:U('admin/CourseManage')}" >课程管理</a ></li >
+            <li><a href="{:U('admin/CourseManage')}">课程管理</a></li>
             <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -193,6 +194,14 @@
 </body>
 </html>
 <script>
+    $(function () {
+        $('#addInfo').on('hidden.bs.modal', function () {
+            //document.getElementById('dataForm').reset();
+            app.newInfoModel.id = '';
+            app.newInfoModel.name = '';
+            app.isError = false;
+        })
+    });
     var appHeader = new Vue({
         el: '#divHeader',
         data: {

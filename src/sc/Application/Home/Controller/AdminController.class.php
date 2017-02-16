@@ -167,7 +167,7 @@ class AdminController extends BaseLoginController
     }
     #endregion
 
-    #region #Course data
+    #region #Profession data
     public function courseManage()
     {
         $result = D("course")->getRecords();
@@ -191,6 +191,40 @@ class AdminController extends BaseLoginController
         $condition['id'] = $_POST['id'];
         if ($condition['id']) {
             $result = D("course")->deleteRecord($condition);
+        }
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+    #endregion
+
+    #region #Course data
+    public function professionManage()
+    {
+        $result = D("profession")->getRecords();
+        $this->assign("records", json_encode($result));
+        $this->assignUser();
+        $this->getDepartments();
+        $this->display();
+    }
+
+    public function ajaxAddProfession()
+    {
+        $result = D("profession")->addInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error(false);
+        }
+    }
+
+    public function ajaxDeleteProfession()
+    {
+        $condition['id'] = $_POST['id'];
+        if ($condition['id']) {
+            $result = D("profession")->deleteRecord($condition);
         }
         if ($result) {
             $this->success(true);

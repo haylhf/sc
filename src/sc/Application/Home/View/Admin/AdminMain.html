@@ -30,6 +30,7 @@
         </div >
 
         <ul class="nav navbar-nav" >
+            <li ><a href="{:U('admin/ProfessionManage')}" >专业管理</a ></li >
             <li ><a href="{:U('admin/TeacherManage')}" >教师管理</a ></li >
             <li ><a href="{:U('admin/StudentManage')}" >学生管理</a ></li >
             <li ><a href="{:U('admin/BuildingManage')}" >教学楼管理</a ></li >
@@ -60,7 +61,7 @@
             </div >
         </div >
         <div class="table-responsive" style="text-align: center;margin:20px;" >
-            <form class="form-horizontal" role="form"
+            <form class="form-horizontal" role="form" v-on:submit.prevent="submit"
                   style="margin-top: 30px; margin-right: 20px; font-size: 16px" >
                 <div class="form-group" >
                     <label class="control-label col-sm-1" >用户名:</label >
@@ -98,7 +99,7 @@
                 </div >
                 <div class="col-sm-offset-2 col-sm-3"
                      style="text-align: right;margin-top:20px;margin-bottom:20px;" >
-                    <button type="button" class="btn btn-primary" v-on:click="submit"
+                    <button type="submit" class="btn btn-primary" v-on:click="submit"
                             style="width: 100px; height: 36px" >
                         提交
                     </button >

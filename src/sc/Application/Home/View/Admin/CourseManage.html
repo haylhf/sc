@@ -2,19 +2,19 @@
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
       xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
       xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
-      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml" >
-<head >
-    <title >学生选课系统</title >
-    <meta charset="utf-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1" >
-    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css" >
-    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet" />
-    <script type="text/javascript" src="__ROOT__/Public/js/vue.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
 
-    <style >
+    <style>
         table thead tr th {
             text-align: center;
             vertical-align: middle;
@@ -30,207 +30,239 @@
             font-size: 16px;
         }
 
-    </style >
-</head >
-<body >
-<nav class="navbar navbar-default" >
-    <div class="container-fluid" id="divHeader" >
-        <div class="navbar-header" style="margin-top: 5px" >
-            <a class="title-logo" href="#" >学生选课系统</a >
-        </div >
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
 
-        <ul class="nav navbar-nav" >
-            <li ><a href="{:U('admin/TeacherManage')}" >教师管理</a ></li >
-            <li ><a href="{:U('admin/StudentManage')}" >学生管理</a ></li >
-            <li ><a href="{:U('admin/BuildingManage')}" >教学楼管理</a ></li >
-            <li class="active" ><a href="#" >课程管理</a ></li >
-            <li ><a href="{:U('admin/AdminMain')}" >信息管理</a ></li >
-        </ul >
-        <ul class="nav navbar-nav navbar-right" >
-            <li >
-                <div style="margin-top: 5px;" class="container-fluid" >
+        <ul class="nav navbar-nav">
+            <li><a href="{:U('admin/ProfessionManage')}">专业管理</a></li>
+            <li><a href="{:U('admin/TeacherManage')}">教师管理</a></li>
+            <li><a href="{:U('admin/StudentManage')}">学生管理</a></li>
+            <li><a href="{:U('admin/BuildingManage')}">教学楼管理</a></li>
+            <li class="active"><a href="#">课程管理</a></li>
+            <li><a href="{:U('admin/AdminMain')}">信息管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <div style="margin-top: 5px;" class="container-fluid">
                     欢迎您，
-                    <b >{{currentuser.role|converterRole}}</b >:
-                    <label style="color: #2aabd2;font-size: 20px;" >
+                    <b>{{currentuser.role|converterRole}}</b>:
+                    <label style="color: #2aabd2;font-size: 20px;">
                         {{currentuser.name}}
-                    </label >
-                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue" >
-                        <span class="glyphicon glyphicon-log-out" ></span > 注销
-                    </button >
-                </div >
-            </li >
-        </ul >
-    </div >
-</nav >
+                    </label>
+                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                        <span class="glyphicon glyphicon-log-out"></span> 注销
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-<div id="divApp" >
-    <div style="margin-bottom: 15px" >
+<div id="divApp">
+    <div style="margin-bottom: 15px">
         <button class="btn btn-primary" v-on:click="addCourse"
-                style="height: 44px;text-align:right; display:inline; margin-left: 15px" >
-            <span class="glyphicon glyphicon-plus" style="padding-right: 5px" ></span >添加课程
-        </button >
-    </div >
+                style="height: 44px;text-align:right; display:inline; margin-left: 15px">
+            <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加课程
+        </button>
+    </div>
 
-    <div id="" class="container-fluid" style="margin-bottom: 15px;margin-top: 20px" >
-        <div class="panel panel-primary" >
-            <div class="panel-heading panel-title" >课程记录
-                <span class="badge" style="margin-left: 5px" >{{records.length}}</span >
-            </div >
-            <div class="table-responsive" >
+    <div id="" class="container-fluid" style="margin-bottom: 15px;margin-top: 20px">
+        <div class="panel panel-primary">
+            <div class="panel-heading panel-title">课程记录
+                <span class="badge" style="margin-left: 5px">{{records.length}}</span>
+            </div>
+            <div class="table-responsive">
                 <table class="table table-bordered table-hover" align="center" v-show="records.length > 0"
-                       style="table-layout: fixed" >
-                    <thead >
-                    <tr >
-                        <th >课程编号</th >
-                        <th >课程名称</th >
-                        <th >课程属性</th >
-                        <th >课程类别</th >
-                        <th >学分</th >
-                        <th width="10%" >操作</th >
-                    </tr >
-                    </thead >
-                    <tbody >
-                    <tr v-for="(record, index) in records" >
-                        <td >{{record.id}}</td >
-                        <td >{{record.name}}</td >
-                        <td >{{record.course_property|converterCourseProperty}}</td >
-                        <td >{{record.course_type|converterCourseType}}</td >
-                        <td >{{record.course_credit}}</td >
+                       style="table-layout: fixed">
+                    <thead>
+                    <tr>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>课程属性</th>
+                        <th>课程类别</th>
+                        <th>学分</th>
+                        <th width="10%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(record, index) in records">
+                        <td>{{record.id}}</td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.course_property|converterCourseProperty}}</td>
+                        <td>{{record.course_type|converterCourseType}}</td>
+                        <td>{{record.course_credit}}</td>
 
-                        <td >
+                        <td>
                             <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
                                     data-toggle="tooltip" data-placement="top"
                                     title="删除"
                             >
-                                <span class="glyphicon glyphicon-minus-sign" ></span >
-                            </button >
-                        </td >
-                    </tr >
-                    </tbody >
-                </table >
-            </div >
+                                <span class="glyphicon glyphicon-minus-sign"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <p v-show="records.length == 0"
-               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray" >
-                暂无记录,请添加~~~</p >
-        </div >
+               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
+                暂无记录,请添加~~~</p>
+        </div>
 
-    </div >
+    </div>
 
     <!--Add item modal-->
-    <div class="modal fade" id="addInfo" role="dialog" >
-        <div class="modal-dialog" >
+    <div class="modal fade" id="addInfo" role="dialog">
+        <div class="modal-dialog">
             <!-- Modal content-->
-            <div class="modal-content" >
-                <div class="modal-header" style="padding:35px 50px;" >
-                    <button type="button" class="close" data-dismiss="modal" >
-                        <span class="glyphicon glyphicon-remove" ></span >
-                    </button >
-                    <h2 >添加课程</h2 >
-                </div >
-                <div class="modal-body" style="padding:40px 50px;" >
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <h2>添加课程</h2>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    <form class="form-horizontal" role="form" >
-                        <div class="form-group" >
-                            <label class="control-label col-sm-3" >课程编号:</label >
-                            <div class="col-sm-8" >
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">课程编号:</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model.trim="newInfoModel.id"
-                                       placeholder="课程编号,格式为字母和数字如 c0001" />
-                            </div >
-                        </div >
-                        <div class="form-group" >
-                            <label class="control-label col-sm-3" >课程名称:</label >
-                            <div class="col-sm-8" >
+                                       placeholder="课程编号,格式为字母和数字如 c0001"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">课程名称:</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-model.trim="newInfoModel.name"
-                                       placeholder="课程名称" />
-                            </div >
-                        </div >
-                        <div class="form-group" >
-                            <label class="control-label col-sm-3" >课程属性:</label >
-                            <div class="col-sm-8" >
-                                <select v-model="newInfoModel.course_property" class="form-control" >
-                                    <option v-for="type in course_propertyItems" v-bind:value="type.value" >
+                                       placeholder="课程名称"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">课程类别:</label>
+                            <div class="col-sm-8">
+                                <select v-model="newInfoModel.course_type" class="form-control"
+                                        v-on:change="on_coursetype_change">
+                                    <option v-for="type in course_typeItems" v-bind:value="type.value">
                                         {{type.text}}
-                                    </option >
-                                </select >
-                            </div >
-                        </div >
-                        <div class="form-group" >
-                            <label class="control-label col-sm-3" >课程类别:</label >
-                            <div class="col-sm-8" >
-                                <select v-model="newInfoModel.course_type" class="form-control" >
-                                    <option v-for="type in course_typeItems" v-bind:value="type.value" >
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!--必修-->
+                        <div class="form-group" v-if="parseInt(newInfoModel.course_type)==0">
+                            <label class="control-label col-sm-3">课程属性:</label>
+                            <div class="col-sm-8">
+                                <select v-model="newInfoModel.course_property" class="form-control"
+                                >
+                                    <option v-for="type in course_major_propertyItems" v-bind:value="type.value">
                                         {{type.text}}
-                                    </option >
-                                </select >
-                            </div >
-                        </div >
-                        <div class="form-group" >
-                            <label class="control-label col-sm-3" >学分:</label >
-                            <div class="col-sm-8" >
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!--选修-->
+                        <div class="form-group" v-else>
+                            <label class="control-label col-sm-3">课程属性:</label>
+                            <div class="col-sm-8">
+                                <select v-model="newInfoModel.course_property" class="form-control"
+                                >
+                                    <option v-for="type in course_elective_propertyItems" v-bind:value="type.value">
+                                        {{type.text}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">学分:</label>
+                            <div class="col-sm-8">
                                 <input type="number" class="form-control"
                                        v-on:keyup="onKeyUp"
                                        v-on:change="onKeyUp"
                                        v-model.number="newInfoModel.course_credit"
-                                       placeholder="输入学分" />
-                            </div >
-                        </div >
+                                       placeholder="输入学分"/>
+                            </div>
+                        </div>
 
-                    </form >
-                    <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;" >
+                    </form>
+                    <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;">
                         {{errorMsg}}!
-                    </div >
+                    </div>
 
                     <button type="button" style="margin-top: 15px;" class="btn btn-success btn-block"
-                            v-on:click="onAddInfoData" >
-                        <span class="glyphicon glyphicon-saved" ></span > 确 定
-                    </button >
-                </div >
-            </div >
-        </div >
-    </div >
+                            v-on:click="onAddInfoData">
+                        <span class="glyphicon glyphicon-saved"></span> 确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div class="modal fade" id="deleteConfirmMsg" role="dialog" >
-        <div class="modal-dialog" >
+    <div class="modal fade" id="deleteConfirmMsg" role="dialog">
+        <div class="modal-dialog">
             <!-- Modal content-->
-            <div class="modal-content" >
-                <div class="modal-header" style="text-align: left" >
-                    <h3 >提示</h3 >
-                </div >
-                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome" >
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    确认要删除编号为<b >"{{selectInfo.id}}"</b >的课程吗？
+                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的课程吗？
                     <button type="button" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
-                            v-on:click="onConfirmDelete" >确 定
-                    </button >
-                </div >
-            </div >
-        </div >
-    </div >
+                            v-on:click="onConfirmDelete">确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-    <div class="modal fade" id="submitMsg" role="dialog" >
-        <div class="modal-dialog" >
+    <div class="modal fade" id="submitMsg" role="dialog">
+        <div class="modal-dialog">
             <!-- Modal content-->
-            <div class="modal-content" >
-                <div class="modal-header" style="text-align: left" >
-                    <h3 >提示</h3 >
-                </div >
-                <div class="modal-body" style="font-size: 20px" >
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 20px">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
                     {{resultMsg}}!
-                </div >
-            </div >
-        </div >
-    </div >
-</div >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-</body >
-</html >
-<script >
+</body>
+</html>
+<script>
+    $(function () {
+        $('#addInfo').on('hidden.bs.modal', function () {
+            //document.getElementById('dataForm').reset();
+            app.newInfoModel.id = '';
+            app.newInfoModel.name = '';
+            app.newInfoModel.course_property = 0;
+            app.newInfoModel.course_type = 0;
+            app.newInfoModel.course_credit = 2;
+
+            app.isError = false;
+        })
+    });
+
     var appHeader = new Vue({
         el: '#divHeader',
         data: {
@@ -279,7 +311,8 @@
             isError: false,
             deleteUrl: "{:U('admin/ajaxDeleteCourse')}",
             addInfoUrl: "{:U('admin/ajaxAddCourse')}",
-            course_propertyItems: [],
+            course_elective_propertyItems: [],
+            course_major_propertyItems: [],
             course_typeItems: [],
         },
         filters: {
@@ -318,6 +351,12 @@
                     this.isError = true;
                     this.errorMsg = '学分只能是大于0的数字';
                 }
+            },
+
+            on_coursetype_change: function () {
+                this.newInfoModel.course_property = parseInt(this.newInfoModel.course_type) == 0 ?
+                        this.course_major_propertyItems[0].value : this.course_elective_propertyItems[0].value;
+                this.onKeyUp();
             },
 
             onKeyUp: function () {
@@ -383,10 +422,16 @@
         ,
         created: function () {
             this.records = JSON.parse('{$records}');
-            for (var i = 0; i < 4; i++) {
-                this.course_propertyItems[i] = {
+            for (var i = 0; i < 2; i++) {
+                this.course_major_propertyItems[i] = {
                     text: getCoursePropertyName(i),
                     value: i,
+                };
+            }
+            for (var i = 0; i < 2; i++) {
+                this.course_elective_propertyItems[i] = {
+                    text: getCoursePropertyName(i + 2),
+                    value: i + 2,
                 };
             }
             for (var i = 0; i < 2; i++) {
@@ -398,4 +443,4 @@
         }
         ,
     })
-</script >
+</script>

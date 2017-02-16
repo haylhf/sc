@@ -40,7 +40,7 @@
     </div>
 
     <div class="container">
-        <form class="form-horizontal" role="form" style="margin-top: 30px;">
+        <form class="form-horizontal" role="form" style="margin-top: 30px;" v-on:submit.prevent="submit">
             <div class="form-group">
                 <label class="control-label col-sm-1">账号:</label>
                 <div class="col-sm-4">
@@ -55,7 +55,7 @@
             </div>
 
             <div class="col-sm-offset-2 col-sm-3" style="text-align: right;margin-top:20px;margin-bottom:20px;">
-                <button type="button"  class="btn btn-primary" v-on:click="submit" style="width: 100px; height: 36px">
+                <button type="submit"  class="btn btn-primary" v-on:submit="submit" style="width: 100px; height: 36px">
                     登录
                 </button>
             </div>

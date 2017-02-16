@@ -36,4 +36,36 @@ class StudentController extends BaseLoginController
         $this->assignUser();
         $this->display();
     }
+
+    public function ajaxModifyPwd()
+    {
+        $result = null;
+        $data['name'] = $_POST['name'];
+        $data['password'] = $_POST['oldPwd'];
+        $data['id'] = $_POST['id'];
+
+        $record = D("student")->login($data);
+        if ($record) {
+            $data['password'] = $_POST['newPwd'];
+            $result = D("student")->modifyInfo($data);
+        }
+
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error('error');
+        }
+    }
+
+
+    public function ajaxModifyInfo()
+    {
+        $result = null;
+        $result = D("student")->modifyInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error('error');
+        }
+    }
 }

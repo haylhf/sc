@@ -44,10 +44,10 @@ class TeacherModel extends Model
 
     public function getRecords($condition = null)
     {
-        $data = null;
+        $data = " 1 ";
         $id = $condition['id'];
         if ($id) {
-            $data = "t.id='$id' ";
+            $data .= " AND t.id='$id' ";
         }
         $list = M('teacher')
             ->alias("t")

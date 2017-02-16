@@ -10,8 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
     <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
-    <script type='text/javascript' src='__ROOT__/Public/js/vue.js'></script>
-    <script type='text/javascript' src='__ROOT__/Public/js/jquery-3.1.1.min.js'></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
     <style>
         body {
             text-align: center;
@@ -90,7 +90,10 @@
         data: {
             isError: false,
             submitUrl: "{:U('index/ajaxLogin')}",
+            teacherUrl: "{:U('teacher/index')}",
+            studentUrl: "{:U('student/index')}",
             submitData: {
+                username: '',
                 userId: '',
                 userPwd: '',
                 role: 1,
@@ -102,7 +105,7 @@
                 this.submitData.role = roleValue;
             },
             submit: function () {
-                //组装JSON
+                var forwardUrl = parseInt(this.submitData.role) == 1 ? this.teacherUrl : this.studentUrl;
                 $.ajax({
                     url: this.submitUrl,
                     type: 'POST',
@@ -112,7 +115,7 @@
                         app.isError = data.status == 0;
                         if (!app.isError) {
 //                            alert('success!');
-                            window.location.href = "{:U('teacher/index')}";
+                            window.location.href = forwardUrl;
                         }
                     },
                 })

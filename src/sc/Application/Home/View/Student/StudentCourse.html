@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+      xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml" >
+<head >
+    <title >学生选课系统</title >
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css" >
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js" ></script >
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
+    <style >
+        body {
+          text-align: center;
+          vertical-align: middle;
+          font-size: 16px;
+        }
+
+    </style >
+</head >
+<body >
+<nav class="navbar navbar-default" >
+    <div class="container-fluid" id="divHeader" >
+        <div class="navbar-header" style="margin-top: 5px" >
+            <a class="title-logo" href="#" >学生选课系统</a >
+        </div >
+
+        <ul class="nav navbar-nav" >
+            <li class="active" ><a href="#" >选课管理</a ></li >
+            <li ><a href="{:U('student/index')}" >信息管理</a ></li >
+        </ul >
+        <ul class="nav navbar-nav navbar-right" >
+            <li>
+                <div style="margin-top: 5px;" class="container-fluid">
+                    欢迎您，
+                    <b>{{currentuser.role|converterRole}}</b>:
+                    <label style="color: #2aabd2;font-size: 20px;">
+                        {{currentuser.name}}
+                    </label>
+                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                        <span class="glyphicon glyphicon-log-out"></span> 注销
+                    </button>
+                </div>
+            </li>
+        </ul >
+    </div >
+</nav >
+<div class="container-fluid" id="divApp" >
+    <div class="modal fade" id="submitMsg" role="dialog" >
+        <div class="modal-dialog" >
+            <!-- Modal content-->
+            <div class="modal-content" >
+                <div class="modal-header" style="text-align: left" >
+                    <h3 >提示</h3 >
+                </div >
+                <div class="modal-body" style="font-size: 20px" >
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    修改成功！
+                </div >
+            </div >
+        </div >
+    </div >
+</div >
+</body >
+</html >
+
+<script >
+    $(function () {
+      $('#submitMsg').on('hidden.bs.modal', function () {
+        window.location.href = "{:U('student/index')}";
+
+      })
+    });
+    var appHeader = new Vue({
+      el: '#divHeader',
+      data: {
+        currentuser: {},
+        submitUrl: "{:U('student/ajaxLogout')}",
+      },
+      methods: {
+        logout: function () {
+          $.ajax({
+            url: this.submitUrl,
+            type: 'POST',
+            dataType: 'json',
+//                    data: '',
+            success: function (result) {
+              if (result.status) {
+                window.location.href = "{:U('index/index')}";
+              }
+              else {
+
+              }
+            },
+          })
+        },
+      },
+      created: function () {
+        this.currentuser = JSON.parse('{$currentuser}');
+      },
+      filters: {
+        converterRole: function (role) {
+          return getRoleName(role);
+        }
+      },
+    });
+
+
+    var app = new Vue({
+      el: '#divApp',
+      data: {
+        isError: false,
+        errorMsg: '',
+        submitUrl: "{:U('student/ajaxModify')}",
+        submitData: {
+          id: '',
+          name: '',
+          oldPwd: '',
+          newPwd: '',
+          confirmNewPwd: '',
+        },
+      },
+      methods: {
+        onKeyUp: function () {
+          this.verifyPwd();
+        },
+        verifyPwd: function () {
+          this.isError = false;
+          if (isStringEmpty(this.submitData.newPwd)) {
+            this.isError = true;
+            this.errorMsg = '新密码不能为空';
+          } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
+            this.isError = true;
+            this.errorMsg = '新密码和确认新密码不一致';
+          }
+
+          if (isStringEmpty(this.submitData.oldPwd)) {
+            this.isError = true;
+            this.errorMsg = '请输入正确的原密码';
+          }
+
+        },
+        submit: function () {
+          this.verifyPwd();
+          if (!this.isError) {
+            $.ajax({
+              url: this.submitUrl,
+              type: 'POST',
+              dataType: 'json',
+              data: this.submitData,
+              success: function (data) {
+                app.isError = data.status == 0;
+                if (!app.isError) {
+                  $("#submitMsg").modal();
+                  //window.location.href = "{:U('admin/index')}";
+                }
+                else {
+                  app.errorMsg = '请输入正确的原密码';
+                }
+              },
+            })
+          }
+        },
+      },
+
+      created: function () {
+        var user = JSON.parse('{$studentUser}');
+        if (user) {
+          this.submitData.name = user.name;
+          this.submitData.id = user.id;
+        }
+
+      },
+    })
+</script >

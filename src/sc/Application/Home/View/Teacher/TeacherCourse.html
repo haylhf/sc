@@ -2,38 +2,46 @@
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
       xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
       xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
-      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml" >
-<head >
-    <title >学生选课系统</title >
-    <meta charset="utf-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1" >
-    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css" >
-    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet" />
-    <script type="text/javascript" src="__ROOT__/Public/js/vue.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
-    <style >
-        body {
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+    <style>
+        table thead tr th {
             text-align: center;
             vertical-align: middle;
-            font-size: 16px;
         }
 
-    </style >
-</head >
-<body >
-<nav class="navbar navbar-default" >
-    <div class="container-fluid" id="divHeader" >
-        <div class="navbar-header" style="margin-top: 5px" >
-            <a class="title-logo" href="#" >学生选课系统</a >
-        </div >
+        table tbody tr td {
+            text-align: center;
+            vertical-align: middle;
+        }
 
-        <ul class="nav navbar-nav" >
-            <li class="active" ><a href="#" >课程管理</a ></li >
-            <li ><a href="{:U('teacher/index')}" >信息管理</a ></li >
-        </ul >
-        <ul class="nav navbar-nav navbar-right" >
+        body {
+
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">开课管理</a></li>
+            <li><a href="{:U('teacher/index')}">信息管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
             <li>
                 <div style="margin-top: 5px;" class="container-fluid">
                     欢迎您，
@@ -46,33 +54,252 @@
                     </button>
                 </div>
             </li>
-        </ul >
-    </div >
-</nav >
-<div class="container-fluid" id="divApp" >
-    <div class="modal fade" id="submitMsg" role="dialog" >
-        <div class="modal-dialog" >
-            <!-- Modal content-->
-            <div class="modal-content" >
-                <div class="modal-header" style="text-align: left" >
-                    <h3 >提示</h3 >
-                </div >
-                <div class="modal-body" style="font-size: 20px" >
-                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    修改成功！
-                </div >
-            </div >
-        </div >
-    </div >
-</div >
-</body >
-</html >
+        </ul>
+    </div>
+</nav>
 
-<script >
+
+<div class="container-fluid" id="divApp">
+    <div class="panel panel-primary" style="margin-bottom: 15px; margin-top: 20px">
+        <div class="panel-heading panel-title" v-on:click="onShowOrHideItems">
+            <div style="font-size: 20px;text-align: left">
+                开设课程
+            </div>
+            <!--<span class="badge" style="margin-left: 5px">{{records.length}}</span>-->
+        </div>
+        <div class="table-responsive" style="padding:20px 20px;">
+            <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+            <form class="form-horizontal" role="form" v-show="isToggle"
+                  style="margin-top: 10px; margin-right: 20px; font-size: 16px">
+                <div class="form-group">
+                    <label class="control-label col-sm-2">开课程名:</label>
+                    <div class="col-sm-4">
+                        <select v-model="current_course" class="form-control"
+                                v-bind:style="{'color': current_course.id == '' ? 'darkgray': '' }"
+                                v-on:change="onCourseChanged"
+                        >
+                            <option v-for="course in courses" v-bind:value="course">
+                                {{course.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">课程属性:</label>
+                    <div class="col-sm-4">
+                        <input type="text" disabled="true" class="form-control"
+                               v-bind:value="current_course.course_property|converterCourseProperty"
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">课程类别:</label>
+                    <div class="col-sm-4">
+                        <input type="text" disabled="true" class="form-control"
+                               v-bind:value="current_course.course_type|converterCourseType"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">学分:</label>
+                    <div class="col-sm-4">
+                        <input type="text" disabled="true" class="form-control"
+                               v-bind:value="current_course.course_credit"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">课程专业:</label>
+                    <div class="col-sm-4">
+                        <select v-model="newInfoModel.profession_id" class="form-control"
+                                v-bind:style="{'color': newInfoModel.profession_id =='' ? 'darkgray': '' }"
+                                v-on:change="onKeyUp"
+                        >
+                            <option v-for="item in professions" v-bind:value="item.id">
+                                {{item.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">上课地点:</label>
+                    <div class="col-sm-4">
+                        <select v-model="newInfoModel.building_id" class="form-control"
+                                v-on:change="onKeyUp"
+                                v-bind:style="{'color': newInfoModel.building_id =='' ? 'darkgray': '' }">
+                            <option v-for="item in buildings" v-bind:value="item.id">
+                                {{item.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">上课日期:</label>
+                    <div class="col-sm-1">
+                        <select v-model="newInfoModel.course_weekday" class="form-control"
+                                v-on:change="onKeyUp"
+                                v-bind:style="{'color': newInfoModel.course_weekday <= 0 ? 'darkgray': '' }">
+                            <option v-for="item in weekdays" v-bind:value="item.value">
+                                {{item.text|converterWeekDay(item.value)}}
+                            </option>
+                        </select>
+                    </div>
+                    <label class="control-label col-sm-1">时间段:</label>
+                    <div class="col-sm-2">
+                        <select v-model="newInfoModel.course_start_time" class="form-control"
+                                v-on:change="onKeyUp"
+                                v-bind:style="{'color': newInfoModel.course_start_time <= 0 ? 'darkgray': '' }">
+                            <option v-for="item in courseTimes" v-bind:value="item.value">
+                                {{item.text}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">最大人数:</label>
+                    <div class="col-sm-4" v-if="current_course.course_type != 0">
+                        <select v-model="newInfoModel.course_max_people_id" class="form-control"
+                                v-on:change="onKeyUp"
+                                v-bind:style="{'color': newInfoModel.course_max_people <= 0 ? 'darkgray': '' }">
+                            <option v-for="item in maxPeoples" v-bind:value="item.value">
+                                {{item.text}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4" v-else>
+                        <input type="text" disabled="true" class="form-control" value="不限"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">备注:</label>
+                    <div class="col-sm-4">
+                        <textarea rows="3" class="form-control" v-model="newInfoModel.remark"
+                                  style="height: 100px; text-align: left; "
+                        >
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-5">
+                        <div class="alert alert-danger" v-if="isError"
+                             style="text-align: left;height: 38px; padding: 10px;">
+                            {{errorMsg}}!
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-offset-3 col-sm-3"
+                     style="text-align: right;margin-top:20px;margin-bottom:20px;">
+
+                    <button type="button" class="btn btn-primary" v-on:click="onSubmit"
+                            style="width: 100px; height: 36px">
+                        提交
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+
+    </div>
+
+    <div class="panel panel-primary" style="margin-bottom: 25px; margin-top: 20px">
+        <div class="panel-heading panel-title" style="text-align: left;"
+             v-on:click="onShowOrHideRecords">
+            开课记录
+            <span class="badge" style="margin-left: 5px">{{records.length}}</span>
+        </div>
+        <div class="table-responsive" v-show="isToggleRecords">
+            <table class="table table-bordered table-hover" align="center" v-show="records.length > 0"
+                   style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th>开课程名</th>
+                    <th>课程属性</th>
+                    <th>课程类别</th>
+                    <th>学分</th>
+                    <th>所属专业</th>
+                    <th>上课地点</th>
+                    <th>上课日期</th>
+                    <th>上课时间段</th>
+                    <th>最大人数</th>
+                    <th>备注</th>
+                    <th width="10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(record, index) in records">
+                    <td>{{record.course_name}}</td>
+                    <td>{{record.course_property|converterCourseProperty}}</td>
+                    <td v-bind:style="{
+                    'color': record.course_type != 0 ? 'darkblue': '',
+                    'font-weight':record.course_type == 0 ? 'bold': ''
+                    }">
+                        {{record.course_type|converterCourseType}}
+                    </td>
+                    <td>{{record.course_credit}}</td>
+                    <td>{{record.profession_name}}</td>
+                    <td>{{record.building_name}}</td>
+                    <td>星期{{record.course_weekday|converterWeekDayName}}</td>
+                    <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
+                    <td v-if="record.course_max_people!=0">{{record.course_max_people}}</td>
+                    <td v-else><b>不限</b></td>
+                    <td>{{record.remark}}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
+                                data-toggle="tooltip" data-placement="top"
+                                title="删除"
+                        >
+                            <span class="glyphicon glyphicon-minus-sign"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p v-show="records.length == 0"
+           style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
+            暂无记录,请添加~~~</p>
+    </div>
+
+    <div class="modal fade" id="submitMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 20px">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    {{resultMsg}}!
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteConfirmMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    确认要删除编号为<b>"{{selectInfo.id}}"</b>的记录吗？
+                    <button type="submit" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
+                            v-on:click="onConfirmDelete">确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
     $(function () {
         $('#submitMsg').on('hidden.bs.modal', function () {
-            window.location.href = "{:U('teacher/index')}";
-
+            document.location.reload();
         })
     });
     var appHeader = new Vue({
@@ -105,61 +332,196 @@
         filters: {
             converterRole: function (role) {
                 return getRoleName(role);
-            }
+            },
         },
     });
-
 
     var app = new Vue({
         el: '#divApp',
         data: {
+            courses: [],
+            professions: [],
+            buildings: [],
+            weekdays: [],
+            courseTimes: [],
+            maxPeoples: [],
+            current_course: {},
+
+            isToggle: true,
             isError: false,
             errorMsg: '',
-            submitUrl: "{:U('teacher/ajaxModify')}",
-            submitData: {
-                id: '',
-                name: '',
-                oldPwd: '',
-                newPwd: '',
-                confirmNewPwd: '',
+            submitUrl: "{:U('teacher/ajaxAddTeacherCourse')}",
+            newInfoModel: {
+                teacher_id: '',
+                course_id: '',
+                profession_id: '',
+                building_id: '',
+                course_weekday: 0,
+                course_start_time: 0,
+                course_max_people_id: 0,
+                course_max_people: 0,
+                remark: '',
             },
+
+            deleteUrl: "{:U('teacher/ajaxDeleteRecord')}",
+            isToggleRecords: true,
+            records: [],
+            selectInfo: {},
+            resultMsg: '',
+        },
+        filters: {
+            converterCourseProperty: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
+                }
+                return getCoursePropertyName(ctype);
+            },
+            converterCourseType: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
+                }
+                return getCourseTypeName(ctype);
+            },
+            converterWeekDay: function (weekdayText, weekdayValue) {
+                if (weekdayValue > 0) {
+                    return "星期" + weekdayText;
+                }
+                return weekdayText;
+            },
+            converterTime: function (timevalue, course_type) {
+                return course_type == 0 ?
+                        getCourseTimeByMajor(timevalue) : getCourseTimeByElective(timevalue);
+
+            },
+            converterWeekDayName: function (dayvalue) {
+                return getUpperStringNumber(dayvalue);
+
+            },
+
         },
         methods: {
+            loadyCourseWeekday: function () {
+                var items = [];
+                for (var i = 0; i < 6; i++) {
+                    items[i] = {
+                        text: getUpperStringNumber(i),
+                        value: i,
+                    }
+                }
+                return items;
+            },
+
+            loadyCourseTime: function (course_type) {
+                var items = [];
+                for (var i = 0; i < 5; i++) {
+                    items[i] = {
+                        text: parseInt(course_type) == 0 ?
+                                getCourseTimeByMajor(i) : getCourseTimeByElective(i),
+                        value: i,
+                    }
+                }
+                return items;
+            },
+
+            loadyMaxPeoples: function () {
+                var items = [];
+                for (var i = 0; i < 5; i++) {
+                    items[i] = {
+                        text: getCourseMaxPeople(i),
+                        value: i,
+                    }
+                }
+                return items;
+            },
+
+            onShowOrHideRecords: function () {
+                this.isToggleRecords = !this.isToggleRecords;
+            },
+
+            onShowOrHideItems: function () {
+                this.isToggle = !this.isToggle;
+            },
+
+            onCourseChanged: function () {
+                this.courseTimes = this.loadyCourseTime(this.current_course.course_type);
+                this.newInfoModel.course_id = this.current_course.id;
+                this.verifyForm();
+            },
+            deleteRecord: function (item) {
+                this.selectInfo = item;
+                if (this.selectInfo) {
+                    $("#deleteConfirmMsg").modal();
+                }
+            },
+            onConfirmDelete: function () {
+                $("#deleteConfirmMsg").modal('hide');
+                $.ajax({
+                    url: this.deleteUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: this.selectInfo,
+                    success: function (result) {
+                        var index = app.records.indexOf(app.selectInfo);
+                        app.records.splice(index, 1);
+//                        if (result.status) {
+//                            document.location.reload();
+//                        }
+                        app.resultMsg = result.status ? '删除成功' : '删除失败';
+                        $("#submitMsg").modal();
+                    },
+                })
+            },
+
             onKeyUp: function () {
-                this.verifyPwd();
+                this.verifyForm();
             },
-            verifyPwd: function () {
+            verifyForm: function () {
                 this.isError = false;
-                if (isStringEmpty(this.submitData.newPwd)) {
-                    this.isError = true;
-                    this.errorMsg = '新密码不能为空';
-                } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
-                    this.isError = true;
-                    this.errorMsg = '新密码和确认新密码不一致';
-                }
 
-                if (isStringEmpty(this.submitData.oldPwd)) {
+                if (isStringEmpty(this.newInfoModel.course_id)) {
                     this.isError = true;
-                    this.errorMsg = '请输入正确的原密码';
+                    this.errorMsg = '请选择开课名称';
                 }
-
+                if (!this.isError && isStringEmpty(this.newInfoModel.profession_id)) {
+                    this.isError = true;
+                    this.errorMsg = '请选择专业';
+                }
+                if (!this.isError && isStringEmpty(this.newInfoModel.building_id)) {
+                    this.isError = true;
+                    this.errorMsg = '请选择上课地点';
+                }
+                if (!this.isError && this.newInfoModel.course_weekday <= 0) {
+                    this.isError = true;
+                    this.errorMsg = '请选择上课时间';
+                }
+                if (!this.isError && this.newInfoModel.course_start_time <= 0) {
+                    this.isError = true;
+                    this.errorMsg = '请选择上课时间段';
+                }
+                if (!this.isError && this.current_course.course_type != 0 && this.newInfoModel.course_max_people_id <= 0) {
+                    this.isError = true;
+                    this.errorMsg = '请选择上课最大人数';
+                }
             },
-            submit: function () {
-                this.verifyPwd();
+
+
+            onSubmit: function () {
+                this.verifyForm();
+                this.newInfoModel.course_max_people = getCourseMaxPeople(this.newInfoModel.course_max_people_id);
                 if (!this.isError) {
                     $.ajax({
                         url: this.submitUrl,
                         type: 'POST',
                         dataType: 'json',
-                        data: this.submitData,
+                        data: this.newInfoModel,
                         success: function (data) {
                             app.isError = data.status == 0;
                             if (!app.isError) {
+                                app.resultMsg = !app.isError ? '添加成功' : '添加失败';
                                 $("#submitMsg").modal();
                                 //window.location.href = "{:U('admin/index')}";
                             }
                             else {
-                                app.errorMsg = '请输入正确的原密码';
                             }
                         },
                     })
@@ -168,12 +530,37 @@
         },
 
         created: function () {
-            var user = JSON.parse('{$teacherUser}');
-            if (user) {
-                this.submitData.name = user.name;
-                this.submitData.id = user.id;
-            }
+            this.newInfoModel.teacher_id = appHeader.currentuser.id;
+            this.courses = JSON.parse('{$courses}');
+            this.courses.unshift
+            ({
+                id: "",
+                name: '请选择',
+            });
+            this.current_course = this.courses[0];
+
+            this.professions = JSON.parse('{$professions}');
+            this.professions.unshift
+            ({
+                id: "",
+                name: '请选择',
+            });
+
+            this.buildings = JSON.parse('{$buildings}');
+            this.buildings.unshift
+            ({
+                id: "",
+                name: '请选择',
+            });
+
+            this.weekdays = this.loadyCourseWeekday();
+
+            this.courseTimes = this.loadyCourseTime(this.current_course.course_type);
+
+            this.maxPeoples = this.loadyMaxPeoples();
+
+            this.records = JSON.parse('{$records}');
 
         },
     })
-</script >
+</script>

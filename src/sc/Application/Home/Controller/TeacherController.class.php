@@ -31,12 +31,6 @@ class TeacherController extends BaseLoginController
         $this->assign("currentuser", json_encode($_SESSION["user"]));
     }
 
-    public function teacherCourse()
-    {
-        $this->assignUser();
-        $this->display();
-    }
-
     public function ajaxModifyPwd()
     {
         $result = null;
@@ -57,11 +51,52 @@ class TeacherController extends BaseLoginController
         }
     }
 
-
     public function ajaxModifyInfo()
     {
         $result = null;
         $result = D("teacher")->modifyInfo($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error('error');
+        }
+    }
+
+    public function teacherCourse()
+    {
+        $allcourses = D("course")->getRecords();
+        $this->assign("courses", json_encode($allcourses));
+
+        $user = $_SESSION["user"];
+        $condition['department_id'] = $user['department_id'];
+        $allprofessions = D("profession")->getRecords($condition);
+        $this->assign("professions", json_encode($allprofessions));
+
+        $allbuildings = D("building")->getRecords();
+        $this->assign("buildings", json_encode($allbuildings));
+
+        $condition['teacher_id'] = $user['id'];
+        $result = D("TeacherCourse")->getRecords($condition);
+        $this->assign("records", json_encode($result));
+        $this->assignUser();
+        $this->display();
+    }
+
+    public function ajaxAddTeacherCourse()
+    {
+        $result = null;
+        $result = D("TeacherCourse")->addData($_POST);
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error('error');
+        }
+    }
+
+    public function ajaxDeleteRecord()
+    {
+        $result = null;
+        $result = D("TeacherCourse")->deleteRecord($_POST);
         if ($result) {
             $this->success(true);
         } else {

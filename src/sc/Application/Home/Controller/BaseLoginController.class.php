@@ -28,10 +28,12 @@ class BaseLoginController extends Controller
         }
 
         if ($result) {
-            $user["id"] = $result['id'];
-            $user["name"] = $result['name'];
-            $user["role"] = $_POST['role'];
-            $_SESSION["user"] = $user;
+//            $user["id"] = $result['id'];
+//            $user["name"] = $result['name'];
+//            $user["role"] = $_POST['role'];
+            $result["password"] = '';
+            $result["role"] = $_POST['role'];
+            $_SESSION["user"] = $result;
             $this->success(true);
         } else {
             $this->error($data);

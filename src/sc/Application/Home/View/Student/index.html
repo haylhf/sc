@@ -1,10 +1,364 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head >
-  <meta charset="UTF-8" >
-  <title >Title</title >
-</head >
-<body >
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+      xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+    <style>
+        body {
+          text-align: center;
+          vertical-align: middle;
+          font-size: 16px;
+        }
 
-</body >
-</html >
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li><a href="{:U('student/studentCourse')}">课程管理</a></li>
+            <li class="active"><a href="#">信息管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <div style="margin-top: 5px;" class="container-fluid">
+                    欢迎您，
+                    <b>{{currentuser.role|converterRole}}</b>:
+                    <label style="color: #2aabd2;font-size: 20px;">
+                        {{currentuser.name}}
+                    </label>
+                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                        <span class="glyphicon glyphicon-log-out"></span> 注销
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid" id="divApp">
+    <div class="panel panel-primary">
+        <div class="panel-heading" v-on:click="onShowHideInfo">
+            <div style="font-size: 20px;text-align: left">
+                基本信息修改
+            </div>
+        </div>
+        <div class="table-responsive" v-show="isShowInfo" style="text-align: center;margin:20px;">
+            <form class="form-horizontal" role="form"
+                  style="margin-top: 30px; margin-right: 20px; font-size: 16px">
+                <div class="form-group">
+                    <label class="control-label col-sm-1">用户名:</label>
+                    <div class="col-sm-4">
+                        <input type="text" disabled="true" class="form-control"
+                               v-model.trim="modifyInfo.name"
+                               style="height: 36px;"/>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">性别:</label>
+                    <div class="col-sm-4" style="margin-top: 5px; float: left">
+                        <label for="male">
+                            <input id="male" type="radio" name="role" value="0"
+                                   v-model="modifyInfo.sex"/>
+                            男</label>
+                        &nbsp;&nbsp;
+                        <label for="famale">
+                            <input id="famale" type="radio" name="role" value="1"
+                                   v-model="modifyInfo.sex"/>
+                            女</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">系别:</label>
+                    <div class="col-sm-4">
+                        <input type="text" disabled="true" class="form-control"
+                               v-model="modifyInfo.department_name"
+                               style="height: 36px;"/>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">email:</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control"
+                               v-model.trim="modifyInfo.email"
+                               v-on:keyup="onInfoKeyUp"
+                               style="height: 36px;"/>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">电话:</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control"
+                               v-model.trim="modifyInfo.phone"
+                               v-on:keyup="onInfoKeyUp"
+                               style="height: 36px;"/>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-3"
+                     style="text-align: right;margin-top:20px;margin-bottom:20px;">
+                    <button type="button" class="btn btn-primary" v-on:click="onModify"
+                            style="width: 100px; height: 36px">
+                        提交
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="alert alert-danger" v-if="isErrorModify">
+            {{errorModifyMsg}}!
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" v-on:click="onShowPwd">
+            <div style="font-size: 20px;text-align: left">
+                密码修改
+            </div>
+        </div>
+        <div class="table-responsive" v-show="isShowPwd" style="text-align: center;margin:20px;">
+            <form class="form-horizontal" role="form"
+                  style="margin-top: 30px; margin-right: 20px; font-size: 16px">
+                <div class="form-group">
+                    <label class="control-label col-sm-1">原密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" v-model="submitData.oldPwd" placeholder="原密码"
+                               v-on:keyup="onKeyUp"
+                               style="height: 36px;float:right;"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">新密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" v-model="submitData.newPwd" placeholder="新密码"
+                               v-on:keyup="onKeyUp"
+                               style="height: 36px;float:right;"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1">确认新密码:</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" v-model="submitData.confirmNewPwd"
+                               placeholder="确认新密码"
+                               v-on:keyup="onKeyUp"
+                               style="height: 36px;float:right;"/>
+                    </div>
+                </div>
+                <div class="col-sm-offset-2 col-sm-3"
+                     style="text-align: right;margin-top:20px;margin-bottom:20px;">
+                    <button type="button" class="btn btn-primary" v-on:click="onModifyPwd"
+                            style="width: 100px; height: 36px">
+                        提交
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="alert alert-danger" v-if="isError">
+            {{errorMsg}}!
+        </div>
+    </div>
+
+    <div class="modal fade" id="submitMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 20px">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    修改成功！
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(function () {
+      $('#submitMsg').on('hidden.bs.modal', function () {
+        document.location.reload();  // window.location.href = "{:U('student/index')}";
+      })
+    });
+    var appHeader = new Vue({
+      el: '#divHeader',
+      data: {
+        currentuser: {},
+        submitUrl: "{:U('student/ajaxLogout')}",
+      },
+      methods: {
+        logout: function () {
+          $.ajax({
+            url: this.submitUrl,
+            type: 'POST',
+            dataType: 'json',
+//                    data: '',
+            success: function (result) {
+              if (result.status) {
+                window.location.href = "{:U('index/index')}";
+              }
+              else {
+
+              }
+            },
+          })
+        },
+      },
+      created: function () {
+        this.currentuser = JSON.parse('{$currentuser}');
+      },
+      filters: {
+        converterRole: function (role) {
+          return getRoleName(role);
+        }
+      },
+    });
+
+
+    var app = new Vue({
+      el: '#divApp',
+      data: {
+        isShowPwd: true,
+        isError: false,
+        errorMsg: '',
+        submitUrl: "{:U('student/ajaxModifyPwd')}",
+        submitData: {
+          id: '',
+          oldPwd: '',
+          newPwd: '',
+          confirmNewPwd: '',
+        },
+
+        isShowInfo: true,
+        isErrorModify: false,
+        errorModifyMsg: '',
+        modifyInfoUrl: "{:U('student/ajaxModifyInfo')}",
+        modifyInfo: {
+          id: '',
+          name: '',
+          sex: 0,
+          department_id: '',
+          department_name: '',
+          email: '',
+          phone: '',
+        },
+      },
+      methods: {
+        onKeyUp: function () {
+          this.verifyPwd();
+        },
+        onShowPwd: function () {
+          this.isShowPwd = !this.isShowPwd;
+        },
+        verifyPwd: function () {
+          this.isError = false;
+          if (isStringEmpty(this.submitData.newPwd)) {
+            this.isError = true;
+            this.errorMsg = '新密码不能为空';
+          } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
+            this.isError = true;
+            this.errorMsg = '新密码和确认新密码不一致';
+          }
+
+          if (isStringEmpty(this.submitData.oldPwd)) {
+            this.isError = true;
+            this.errorMsg = '请输入正确的原密码';
+          }
+
+        },
+        onModifyPwd: function () {
+          this.verifyPwd();
+          if (!this.isError) {
+            $.ajax({
+              url: this.submitUrl,
+              type: 'POST',
+              dataType: 'json',
+              data: this.submitData,
+              success: function (data) {
+                app.isError = data.status == 0;
+                if (!app.isError) {
+                  $("#submitMsg").modal();
+                  //window.location.href = "{:U('admin/index')}";
+                }
+                else {
+                  app.errorMsg = '请输入正确的原密码';
+                }
+              },
+            })
+          }
+        },
+
+        onShowHideInfo: function () {
+          this.isShowInfo = !this.isShowInfo;
+        },
+
+        verifyInfo: function () {
+          this.isErrorModify = false;
+          this.errorModifyMsg = '';
+          if (this.modifyInfo.email != '' && !regIsEmail(this.modifyInfo.email)) {
+            this.isErrorModify = true;
+            this.errorModifyMsg = '请输入正确的邮件地址';
+          }
+          if (this.modifyInfo.phone != '' && !regIsPhone(this.modifyInfo.phone)) {
+            this.isErrorModify = true;
+            this.errorModifyMsg = '请输入正确的电话号码';
+          }
+        },
+
+        onInfoKeyUp: function () {
+          this.verifyInfo();
+        },
+        onModify: function () {
+          this.verifyInfo();
+          if (!this.isErrorModify) {
+            $.ajax({
+              url: this.modifyInfoUrl,
+              type: 'POST',
+              dataType: 'json',
+              data: this.modifyInfo,
+              success: function (data) {
+                app.isErrorModify = data.status == 0;
+                if (!app.isErrorModify) {
+                  $("#submitMsg").modal();
+                  //window.location.href = "{:U('admin/index')}";
+                }
+              },
+            })
+          }
+        }
+      },
+
+      created: function () {
+        var user = JSON.parse('{$studentUser}');
+        if (user) {
+          this.submitData.id = user.id;
+
+          this.modifyInfo.id = user.id;
+          this.modifyInfo.name = user.name;
+          this.modifyInfo.sex = user.sex;
+          this.modifyInfo.department_name = user.department_name;
+          this.modifyInfo.email = user.email;
+          this.modifyInfo.phone = user.phone;
+        }
+
+      },
+    })
+</script>
