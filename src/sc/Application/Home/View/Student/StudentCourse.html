@@ -2,38 +2,47 @@
 <html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
       xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
       xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
-      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml" >
-<head >
-    <title >学生选课系统</title >
-    <meta charset="utf-8" >
-    <meta name="viewport" content="width=device-width, initial-scale=1" >
-    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css" >
-    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet" />
-    <script type="text/javascript" src="__ROOT__/Public/js/vue.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js" ></script >
-    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
-    <style >
-        body {
-          text-align: center;
-          vertical-align: middle;
-          font-size: 16px;
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+    <style>
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle;
         }
 
-    </style >
-</head >
-<body >
-<nav class="navbar navbar-default" >
-    <div class="container-fluid" id="divHeader" >
-        <div class="navbar-header" style="margin-top: 5px" >
-            <a class="title-logo" href="#" >学生选课系统</a >
-        </div >
+        table tbody tr td {
+            text-align: center;
+            vertical-align: middle;
+        }
 
-        <ul class="nav navbar-nav" >
-            <li class="active" ><a href="#" >选课管理</a ></li >
-            <li ><a href="{:U('student/index')}" >信息管理</a ></li >
-        </ul >
-        <ul class="nav navbar-nav navbar-right" >
+        body {
+
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">选课管理</a></li>
+            <li><a href="{:U('student/index')}">信息管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
             <li>
                 <div style="margin-top: 5px;" class="container-fluid">
                     欢迎您，
@@ -46,134 +55,302 @@
                     </button>
                 </div>
             </li>
-        </ul >
-    </div >
-</nav >
-<div class="container-fluid" id="divApp" >
-    <div class="modal fade" id="submitMsg" role="dialog" >
-        <div class="modal-dialog" >
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid" id="divApp">
+
+    <div class="panel panel-primary" style="margin: 15px;">
+
+        <div class="panel-heading panel-title" style="text-align: left;"
+             v-on:click="onShowOrHideRecords">
+            已选课程
+            <span class="badge" style="margin-left: 5px">{{selectedCourses.length}}</span>
+        </div>
+        <div class="table-responsive" v-show="isToggleRecords">
+            <table class="table table-bordered table-hover" align="center" v-show="selectedCourses.length > 0"
+                   style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th>开课名称</th>
+                    <th>开课教师</th>
+                    <th>课程类别</th>
+                    <th>学分</th>
+                    <th>所属专业</th>
+                    <th>上课地点</th>
+                    <th>上课日期</th>
+                    <th>上课时间段</th>
+                    <th>最大人数</th>
+                    <th>备注</th>
+                    <th width="10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(record, index) in selectedCourses">
+                    <td>{{record.course_name}}</td>
+                    <td>{{record.teacher_name}}</td>
+                    <td v-bind:style="{
+                    'color': record.course_type != 0 ? 'darkblue': '',
+                    'font-weight':record.course_type == 0 ? 'bold': ''
+                    }">
+                        {{record.course_type|converterCourseType}}
+                    </td>
+                    <td>{{record.course_credit}}</td>
+                    <td>{{record.profession_name}}</td>
+                    <td>{{record.building_name}}</td>
+                    <td>星期{{record.course_weekday|converterWeekDayName}}</td>
+                    <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
+                    <td v-if="record.course_max_people!=0">{{record.course_max_people}}</td>
+                    <td v-else><b>不限</b></td>
+                    <td>{{record.remark}}</td>
+                    <td>
+                        <!--<button class="btn btn-danger btn-sm" @click="deleteRecord(record)"-->
+                        <!--data-toggle="tooltip" data-placement="top"-->
+                        <!--title="删除"-->
+                        <!--&gt;-->
+                        <!--<span class="glyphicon glyphicon-minus-sign"></span>-->
+                        <!--</button>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p v-show="selectedCourses.length == 0"
+           style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
+            暂无记录,请添加~~~</p>
+    </div>
+
+    <div class="panel panel-primary" style="margin: 15px;">
+
+        <div class="panel-heading panel-title" style="text-align: left;"
+             v-on:click="onShowOrHideUnSelect">
+            待选课程
+            <span class="badge" style="margin-left: 5px">{{unSelectedCourses.length}}</span>
+        </div>
+        <div class="table-responsive" v-show="isToggleUnSelect">
+            <table class="table table-bordered table-hover" align="center" v-show="unSelectedCourses.length > 0"
+                   style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th>开课名称</th>
+                    <th>开课教师</th>
+                    <th>课程类别</th>
+                    <th>学分</th>
+                    <th>所属专业</th>
+                    <th>上课地点</th>
+                    <th>上课日期</th>
+                    <th>上课时间段</th>
+                    <th>最大人数</th>
+                    <th>备注</th>
+                    <th width="10%">选择</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(record, index) in unSelectedCourses">
+                    <td>{{record.course_name}}</td>
+                    <td>{{record.teacher_name}}</td>
+                    <td v-bind:style="{
+                    'color': record.course_type != 0 ? 'darkblue': '',
+                    'font-weight':record.course_type == 0 ? 'bold': ''
+                    }">
+                        {{record.course_type|converterCourseType}}
+                    </td>
+                    <td>{{record.course_credit}}</td>
+                    <td>{{record.profession_name}}</td>
+                    <td>{{record.building_name}}</td>
+                    <td>星期{{record.course_weekday|converterWeekDayName}}</td>
+                    <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
+                    <td>{{record.course_max_people}}</td>
+                    <td>{{record.remark}}</td>
+                    <td>
+                        <input type="checkbox" :value="record.teacher_course_id"
+                               v-model="checkedItems" style="width: 20px;height: 20px;">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p v-show="unSelectedCourses.length == 0"
+           style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
+            暂无记录,请添加~~~</p>
+    </div>
+
+
+    <div class="modal fade" id="submitMsg" role="dialog">
+        <div class="modal-dialog">
             <!-- Modal content-->
-            <div class="modal-content" >
-                <div class="modal-header" style="text-align: left" >
-                    <h3 >提示</h3 >
-                </div >
-                <div class="modal-body" style="font-size: 20px" >
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 20px">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
                     修改成功！
-                </div >
-            </div >
-        </div >
-    </div >
-</div >
-</body >
-</html >
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteConfirmMsg" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: left">
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body" style="font-size: 18px;font-family: FontAwesome">
+                    <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
+                    确认要删除选课程为<b>"{{selectInfo.course_name}}"</b>的记录吗？
+                    <button type="submit" style="margin-top: 50px;font-size: 16px" class="btn btn-danger btn-block"
+                            v-on:click="onConfirmDelete">确 定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
 
-<script >
+<script>
     $(function () {
-      $('#submitMsg').on('hidden.bs.modal', function () {
-        window.location.href = "{:U('student/index')}";
-
-      })
+        $('#submitMsg').on('hidden.bs.modal', function () {
+            document.location.reload();
+        })
     });
     var appHeader = new Vue({
-      el: '#divHeader',
-      data: {
-        currentuser: {},
-        submitUrl: "{:U('student/ajaxLogout')}",
-      },
-      methods: {
-        logout: function () {
-          $.ajax({
-            url: this.submitUrl,
-            type: 'POST',
-            dataType: 'json',
-//                    data: '',
-            success: function (result) {
-              if (result.status) {
-                window.location.href = "{:U('index/index')}";
-              }
-              else {
-
-              }
-            },
-          })
+        el: '#divHeader',
+        data: {
+            currentuser: {},
+            submitUrl: "{:U('student/ajaxLogout')}",
         },
-      },
-      created: function () {
-        this.currentuser = JSON.parse('{$currentuser}');
-      },
-      filters: {
-        converterRole: function (role) {
-          return getRoleName(role);
-        }
-      },
+        methods: {
+            logout: function () {
+                $.ajax({
+                    url: this.submitUrl,
+                    type: 'POST',
+                    dataType: 'json',
+//                    data: '',
+                    success: function (result) {
+                        if (result.status) {
+                            window.location.href = "{:U('index/index')}";
+                        }
+                        else {
+
+                        }
+                    },
+                })
+            },
+        },
+        created: function () {
+            this.currentuser = JSON.parse('{$currentuser}');
+        },
+        filters: {
+            converterRole: function (role) {
+                return getRoleName(role);
+            }
+        },
     });
 
 
     var app = new Vue({
-      el: '#divApp',
-      data: {
-        isError: false,
-        errorMsg: '',
-        submitUrl: "{:U('student/ajaxModify')}",
-        submitData: {
-          id: '',
-          name: '',
-          oldPwd: '',
-          newPwd: '',
-          confirmNewPwd: '',
-        },
-      },
-      methods: {
-        onKeyUp: function () {
-          this.verifyPwd();
-        },
-        verifyPwd: function () {
-          this.isError = false;
-          if (isStringEmpty(this.submitData.newPwd)) {
-            this.isError = true;
-            this.errorMsg = '新密码不能为空';
-          } else if (this.submitData.newPwd != this.submitData.confirmNewPwd) {
-            this.isError = true;
-            this.errorMsg = '新密码和确认新密码不一致';
-          }
+        el: '#divApp',
+        data: {
+            isError: false,
+            errorMsg: '',
 
-          if (isStringEmpty(this.submitData.oldPwd)) {
-            this.isError = true;
-            this.errorMsg = '请输入正确的原密码';
-          }
+            isToggleRecords: true,
+            selectedCourses: [],
+            deleteUrl: "{:U('student/ajaxDeleteRecord')}",
+            selectInfo: {},
+
+            resultMsg: '',
+            checkedItems: [],
+            unSelectedCourses: [],
+            isToggleUnSelect: true,
+            submitUrl: "{:U('student/ajaxAddStudentCourse')}",
 
         },
-        submit: function () {
-          this.verifyPwd();
-          if (!this.isError) {
-            $.ajax({
-              url: this.submitUrl,
-              type: 'POST',
-              dataType: 'json',
-              data: this.submitData,
-              success: function (data) {
-                app.isError = data.status == 0;
-                if (!app.isError) {
-                  $("#submitMsg").modal();
-                  //window.location.href = "{:U('admin/index')}";
+        filters: {
+            converterCourseProperty: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
                 }
-                else {
-                  app.errorMsg = '请输入正确的原密码';
+                return getCoursePropertyName(ctype);
+            },
+            converterCourseType: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
                 }
-              },
-            })
-          }
+                return getCourseTypeName(ctype);
+            },
+            converterWeekDay: function (weekdayText, weekdayValue) {
+                if (weekdayValue > 0) {
+                    return "星期" + weekdayText;
+                }
+                return weekdayText;
+            },
+            converterTime: function (timevalue, course_type) {
+                return course_type == 0 ?
+                        getCourseTimeByMajor(timevalue) : getCourseTimeByElective(timevalue);
+
+            },
+            converterWeekDayName: function (dayvalue) {
+                return getUpperStringNumber(dayvalue);
+
+            },
+
         },
-      },
+        methods: {
+            onShowOrHideUnSelect: function () {
+                this.isToggleUnSelect = !this.isToggleUnSelect;
+            },
+            onShowOrHideRecords: function () {
+                this.isToggleRecords = !this.isToggleRecords;
+            },
 
-      created: function () {
-        var user = JSON.parse('{$studentUser}');
-        if (user) {
-          this.submitData.name = user.name;
-          this.submitData.id = user.id;
-        }
+            deleteRecord: function (item) {
+                this.selectInfo = item;
+                if (this.selectInfo) {
+                    $("#deleteConfirmMsg").modal();
+                }
+            },
+            onConfirmDelete: function () {
+                $("#deleteConfirmMsg").modal('hide');
+                $.ajax({
+                    url: this.deleteUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: this.selectInfo,
+                    success: function (result) {
+                        var index = app.selectedCourses.indexOf(app.selectInfo);
+                        app.selectedCourses.splice(index, 1);
+//                        if (result.status) {
+//                            document.location.reload();
+//                        }
+                        app.resultMsg = result.status ? '删除成功' : '删除失败';
+                        $("#submitMsg").modal();
+                    },
+                })
+            },
 
-      },
+            onKeyUp: function () {
+                this.verifyForm();
+            },
+            verifyForm: function () {
+                this.isError = false;
+            },
+
+            onSearchRecords: function () {
+                this.selectedCourses = JSON.parse('{$selectedCourses}');
+                this.unSelectedCourses = JSON.parse('{$unSelectedCourses}');
+
+            },
+
+        },
+
+        created: function () {
+            //load data
+            this.onSearchRecords();
+        },
     })
-</script >
+</script>

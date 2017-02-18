@@ -38,18 +38,18 @@
 
 <div id="divForm" class="panel panel-primary" style="margin-left:30%; margin-right:30%;">
     <div class="panel-heading">
-        <h2 class="panel-title" style="font-size: 20px;">登录</h2>
+        <h3 class="panel-title" style="font-size: 26px;"></span>登录</h3>
     </div>
     <div class="container">
-        <form class="form-horizontal" role="form" style="margin-top: 30px;">
+        <form class="form-horizontal" role="form" v-on:submit.prevent="submit" style="margin-top: 30px;" >
             <div class="form-group">
-                <label class="control-label col-sm-1">账号:</label>
+                <label class="control-label col-sm-1"><span class="glyphicon glyphicon-user"></span> 账号:</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control" v-model.trim="submitData.userId" placeholder="学号或教师号"/>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-1">密码:</label>
+                <label class="control-label col-sm-1"><span class="glyphicon glyphicon-lock"></span > 密码:</label>
                 <div class="col-sm-4">
                     <input type="password" class="form-control" v-model="submitData.userPwd" placeholder="输入密码"/>
                 </div>
@@ -69,8 +69,8 @@
                 </div>
             </div>
             <div class="col-sm-offset-2 col-sm-3" style="text-align: right;margin-top:20px;margin-bottom:20px;">
-                <button type="button" class="btn btn-primary" v-on:click="submit" style="width: 100px; height: 36px">
-                    登录
+                <button type="submit" class="btn btn-primary" v-on:click="submit" style="width: 100px; height: 36px">
+                    <span class="glyphicon glyphicon-ok"></span> 登录
                 </button>
             </div>
         </form>
@@ -90,8 +90,8 @@
         data: {
             isError: false,
             submitUrl: "{:U('index/ajaxLogin')}",
-            teacherUrl: "{:U('teacher/index')}",
-            studentUrl: "{:U('student/index')}",
+            teacherUrl: "{:U('teacher/TeacherCourse')}",
+            studentUrl: "{:U('student/StudentCourse')}",
             submitData: {
                 username: '',
                 userId: '',

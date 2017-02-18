@@ -2,6 +2,20 @@
  * Created by PC-LHF on 2017-02-06.
  */
 
+var EveryPageNum = 2;
+
+function getPageNum(totalRecords) {
+    return Math.ceil(totalRecords / EveryPageNum)//当pager indicator超过10的时候显示
+}
+
+function getParameter(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+}
+
+
 function getRoleName(role) {
     var name = '';
     switch (parseInt(role)) {

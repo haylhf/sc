@@ -75,9 +75,9 @@ class TeacherController extends BaseLoginController
         $allbuildings = D("building")->getRecords();
         $this->assign("buildings", json_encode($allbuildings));
 
-        $condition['teacher_id'] = $user['id'];
-        $result = D("TeacherCourse")->getRecords($condition);
-        $this->assign("records", json_encode($result));
+//        $condition['teacher_id'] = $user['id'];
+//        $result = D("TeacherCourse")->getRecords($condition);
+//        $this->assign("records", json_encode($result));
         $this->assignUser();
         $this->display();
     }
@@ -101,6 +101,20 @@ class TeacherController extends BaseLoginController
             $this->success(true);
         } else {
             $this->error('error');
+        }
+    }
+
+    public function ajaxSearchData()
+    {
+        $user = $_SESSION["user"];
+        $condition = array();
+        $condition = array_merge($condition, $_POST);
+        $condition['teacher_id'] = $user['id'];
+        $items = D("TeacherCourse")->getRecords($condition);
+        if (isset($items)) {
+            $this->success($items);
+        } else {
+            $this->error("NO data");
         }
     }
 
