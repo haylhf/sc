@@ -7,6 +7,7 @@
  */
 
 namespace Home\Model;
+
 use Think\Model;
 
 class StudentCourseModel extends Model
@@ -19,7 +20,7 @@ class StudentCourseModel extends Model
                 $str = $condition['student_course_id'];
                 $data .= " AND student_course_id='$str' ";
             }
-            if (isset($condition['student_id'])) {
+            if ($condition['student_id']) {
                 $str = $condition['student_id'];
                 $data .= " AND student_id='$str' ";
             }
@@ -85,13 +86,13 @@ class StudentCourseModel extends Model
         return $list;
     }
 
-    public function addData($info)
+    public function addData($infodata, $id)
     {
-        $data['student_id'] = $info['student_id'];
-        $data['teacher_course_id'] = $info['teacher_course_id'];
-//        $sql = M('teacher')->fetchSql(true)->data($data)->add();
-//        echo $sql;
-        $result = M('student_course')->data($data)->add();
+        foreach ($infodata as $info) {
+            $data['student_id'] = $id;
+            $data['teacher_course_id'] = $info['teacher_course_id'];
+            $result = M('student_course')->data($data)->add();
+        }
         return $result;
 
     }

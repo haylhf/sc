@@ -104,12 +104,13 @@
                     <td v-else><b>不限</b></td>
                     <td>{{record.remark}}</td>
                     <td>
-                        <!--<button class="btn btn-danger btn-sm" @click="deleteRecord(record)"-->
-                        <!--data-toggle="tooltip" data-placement="top"-->
-                        <!--title="删除"-->
-                        <!--&gt;-->
-                        <!--<span class="glyphicon glyphicon-minus-sign"></span>-->
-                        <!--</button>-->
+                        <button v-bind:disabled="record.course_type == 0" class="btn btn-danger btn-sm"
+                                @click="deleteRecord(record)"
+                                data-toggle="tooltip" data-placement="top"
+                                title="退课"
+                        >
+                            <span class="glyphicon glyphicon-minus-sign"></span>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
@@ -120,61 +121,73 @@
             暂无记录,请添加~~~</p>
     </div>
 
-    <div class="panel panel-primary" style="margin: 15px;">
+    <div style="margin: 15px;">
+        <div class="panel panel-primary">
 
-        <div class="panel-heading panel-title" style="text-align: left;"
-             v-on:click="onShowOrHideUnSelect">
-            待选课程
-            <span class="badge" style="margin-left: 5px">{{unSelectedCourses.length}}</span>
+            <div class="panel-heading panel-title" style="text-align: left;"
+                 v-on:click="onShowOrHideUnSelect">
+                待选课程
+                <span class="badge" style="margin-left: 5px">{{unSelectedCourses.length}}</span>
+            </div>
+            <div class="table-responsive" v-show="isToggleUnSelect">
+                <table class="table table-bordered table-hover" align="center" v-show="unSelectedCourses.length > 0"
+                       style="table-layout: fixed;">
+                    <thead>
+                    <tr>
+                        <th>开课名称</th>
+                        <th>开课教师</th>
+                        <th>课程类别</th>
+                        <th>学分</th>
+                        <th>所属专业</th>
+                        <th>上课地点</th>
+                        <th>上课日期</th>
+                        <th>上课时间段</th>
+                        <th>最大人数</th>
+                        <th>备注</th>
+                        <th width="10%">选择</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(record, index) in unSelectedCourses">
+                        <td>{{record.course_name}}</td>
+                        <td>{{record.teacher_name}}</td>
+                        <td v-bind:style="{
+                        'color': record.course_type != 0 ? 'darkblue': '',
+                        'font-weight':record.course_type == 0 ? 'bold': ''
+                        }">
+                            {{record.course_type|converterCourseType}}
+                        </td>
+                        <td>{{record.course_credit}}</td>
+                        <td>{{record.profession_name}}</td>
+                        <td>{{record.building_name}}</td>
+                        <td>星期{{record.course_weekday|converterWeekDayName}}</td>
+                        <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
+                        <td>{{record.course_max_people}}</td>
+                        <td>{{record.remark}}</td>
+                        <td>
+                            <input type="checkbox" :value="record" v-on:change="onCheckChanged"
+                                   v-model="checkedItems" style="width: 20px;height: 20px;">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p v-show="unSelectedCourses.length == 0"
+               style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
+                暂无记录,没有可选的课程~~~</p>
+
         </div>
-        <div class="table-responsive" v-show="isToggleUnSelect">
-            <table class="table table-bordered table-hover" align="center" v-show="unSelectedCourses.length > 0"
-                   style="table-layout: fixed;">
-                <thead>
-                <tr>
-                    <th>开课名称</th>
-                    <th>开课教师</th>
-                    <th>课程类别</th>
-                    <th>学分</th>
-                    <th>所属专业</th>
-                    <th>上课地点</th>
-                    <th>上课日期</th>
-                    <th>上课时间段</th>
-                    <th>最大人数</th>
-                    <th>备注</th>
-                    <th width="10%">选择</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(record, index) in unSelectedCourses">
-                    <td>{{record.course_name}}</td>
-                    <td>{{record.teacher_name}}</td>
-                    <td v-bind:style="{
-                    'color': record.course_type != 0 ? 'darkblue': '',
-                    'font-weight':record.course_type == 0 ? 'bold': ''
-                    }">
-                        {{record.course_type|converterCourseType}}
-                    </td>
-                    <td>{{record.course_credit}}</td>
-                    <td>{{record.profession_name}}</td>
-                    <td>{{record.building_name}}</td>
-                    <td>星期{{record.course_weekday|converterWeekDayName}}</td>
-                    <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
-                    <td>{{record.course_max_people}}</td>
-                    <td>{{record.remark}}</td>
-                    <td>
-                        <input type="checkbox" :value="record.teacher_course_id"
-                               v-model="checkedItems" style="width: 20px;height: 20px;">
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="alert alert-danger" v-if="isError" style="margin-top: 10px;padding: 5px;">
+            {{errorMsg}}!
         </div>
-        <p v-show="unSelectedCourses.length == 0"
-           style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">
-            暂无记录,请添加~~~</p>
+        <button class="btn btn-primary " @click="onSubmit"
+                v-show="checkedItems.length > 0"
+                style="margin-bottom: 15px; float: right; text-align: right"
+                data-toggle="tooltip" data-placement="top"
+                title="确认选课">
+            <span class="glyphicon glyphicon-ok"> 确认选课</span>
+        </button>
     </div>
-
 
     <div class="modal fade" id="submitMsg" role="dialog">
         <div class="modal-dialog">
@@ -185,7 +198,7 @@
                 </div>
                 <div class="modal-body" style="font-size: 20px">
                     <!-- 加上<form>标签可以使得modal窗口在点击按钮都自动dismiss-->
-                    修改成功！
+                    {{resultMsg}}！
                 </div>
             </div>
         </div>
@@ -332,12 +345,75 @@
                     },
                 })
             },
+            onSubmit: function () {
+                this.verifyForm();
+                var submitData = {data: this.checkedItems,};
+                if (!this.isError) {
+                    $.ajax({
+                        url: this.submitUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: submitData,
+                        success: function (result) {
+                            app.resultMsg = result.status ? '选课成功' : '选课失败';
+                            $("#submitMsg").modal();
+                        },
+                    })
+                } else {
+//                    this.checkedItems.splice(0, this.checkedItems.length)//clear
+                }
+            },
 
-            onKeyUp: function () {
+            onCheckChanged: function () {
                 this.verifyForm();
             },
             verifyForm: function () {
                 this.isError = false;
+                this.isError = this.issConflictCourse();
+                if (!this.isError) {
+                    this.isError = this.isConflictCourseTime();
+                }
+
+            },
+
+            //验证同一种课程是否重复选择
+            issConflictCourse: function () {
+                var isRepeatCourse = false;
+                var coursename = '';
+                for (var i = 0; i < this.checkedItems.length; i++) {
+                    var value = this.checkedItems[i];
+                    isRepeatCourse = this.checkedItems.some(function (cvalue) {
+                        return (cvalue.course_id == value.course_id
+                        && cvalue.teacher_course_id != value.teacher_course_id);
+                    });
+                    if (isRepeatCourse) {
+                        coursename = value.course_name;
+                        break;
+                    }
+                }
+                if (isRepeatCourse) {
+                    this.errorMsg = "课程 '" + coursename + "' 不能同时选择两个老师的课程，请重新选择";
+                }
+                return isRepeatCourse;
+            },
+
+            //验证选择的课程上课时间是否有冲突
+            isConflictCourseTime: function () {
+                var isTimeConflict = false;
+                var conflictName = '';
+                for (var i = 0; i < this.checkedItems.length; i++) {
+                    var value = this.checkedItems[i];
+                    isTimeConflict = this.selectedCourses.some(function (cvalue) {
+                        conflictName = cvalue.course_name;
+                        return (cvalue.course_weekday == value.course_weekday
+                        && cvalue.course_start_time == value.course_start_time);
+                    });
+                    if (isTimeConflict) {
+                        this.errorMsg = "课程 '" + value.course_name + "'与已选课程 '" + conflictName + "' 上课时间重合，请重新选择";
+                        break;
+                    }
+                }
+                return isTimeConflict;
             },
 
             onSearchRecords: function () {

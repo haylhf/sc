@@ -110,10 +110,14 @@ class StudentController extends BaseLoginController
         return $items;
     }
 
-    public function ajaxAddTeacherCourse()
+    public function ajaxAddStudentCourse()
     {
         $result = null;
-        $result = D("StudentCourse")->addData($_POST);
+        $user = $_SESSION["user"];
+        $condition = array();
+        $condition = array_merge($condition, $_POST['data']);
+
+        $result = D("StudentCourse")->addData($condition, $user['id']);
         if ($result) {
             $this->success(true);
         } else {
