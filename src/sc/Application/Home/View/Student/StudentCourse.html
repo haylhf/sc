@@ -143,6 +143,7 @@
                         <th>上课日期</th>
                         <th>上课时间段</th>
                         <th>最大人数</th>
+                        <th>已选课人数</th>
                         <th>备注</th>
                         <th width="10%">选择</th>
                     </tr>
@@ -163,7 +164,25 @@
                         <td>星期{{record.course_weekday|converterWeekDayName}}</td>
                         <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
                         <td>{{record.course_max_people}}</td>
-                        <td>{{record.remark}}</td>
+                        <td>
+                            <!--<div v-if="typeof(record.selected_people)=='object'">-->
+                            <!--<b>无</b>-->
+                            <!--</div>-->
+                            <div v-if="record.selected_people>0">
+                                {{record.selected_people}}
+                            </div>
+                            <div v-else>
+                                <b>无</b>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-if="record.remark.length>0">
+                                {{record.remark}}
+                            </div>
+                            <div v-else>
+                                <b>无</b>
+                            </div>
+                        </td>
                         <td>
                             <input type="checkbox" :value="record" v-on:change="onCheckChanged"
                                    v-model="checkedItems" style="width: 20px;height: 20px;">

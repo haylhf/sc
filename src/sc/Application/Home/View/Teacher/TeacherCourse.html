@@ -608,6 +608,9 @@
                     this.errorMsg = '请选择上课最大人数';
                 }
                 if (!this.isError) {
+                    this.isError = this.isErrorCourse();
+                }
+                if (!this.isError) {
                     this.isError = this.isRepeatCourse();
                 }
                 if (!this.isError) {
@@ -656,6 +659,20 @@
                 return isRepeat;
             },
 
+            //验证课程是否只有一种
+            isErrorCourse: function () {
+                var isError = false;
+                for (var i = 0; i < this.records.length; i++) {
+                    isError = this.records[i].course_id != this.newInfoModel.course_id;
+                    if (isError)
+                        break;
+                }
+                if (isError) {
+                    this.errorMsg = "教师只允许上一门课，可以是不同专业，请重新选择";
+                }
+                return isError;
+            },
+
             onSearchRecords: function () {
                 $.ajax({
                     url: this.searchUrl,
@@ -684,12 +701,18 @@
                         success: function (data) {
                             app.isError = data.status == 0;
                             if (!app.isError) {
-                                app.resultMsg = !app.isError ? '添加成功' : '添加失败';
+                                app.resultMsg = '添加成功';
                                 $("#submitMsg").modal();
                                 //window.location.href = "{:U('admin/index')}";
                             }
                             else {
+                                app.errorMsg = data.info;
                             }
+                        },
+                        error: function (errordata) {
+                            app.resultMsg = '添加失败';
+                            $("#submitMsg").modal();
+
                         },
                     })
                 }
