@@ -151,6 +151,32 @@ function getCourseTimeByElective(timeType) {
     return result;
 }
 
+function getAllCourseTime(timeType) {
+    var result = '';
+    switch (parseInt(timeType)) {
+        case 2:
+            result = '10:00 ~ 11:00';
+            break;
+        case 3:
+            result = '11:00 ~ 12:00';
+            break;
+        case 4:
+            result = '14:00 ~ 15:00';
+            break;
+        case 5:
+            result = '15:00 ~ 16:00';
+            break;
+        case 6:
+            result = '16:00 ~ 17:00';
+            break;
+        case 1:
+        default:
+            result = '09:00 ~ 10:00';
+            break;
+    }
+    return result;
+}
+
 function getCourseMaxPeople(ptype) {
     var result = '';
     switch (parseInt(ptype)) {

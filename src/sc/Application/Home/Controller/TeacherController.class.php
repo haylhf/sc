@@ -11,6 +11,7 @@ namespace Home\Controller;
 
 class TeacherController extends BaseLoginController
 {
+    #region #index
     public function index()
     {
         $user = null;
@@ -61,7 +62,9 @@ class TeacherController extends BaseLoginController
             $this->error('error');
         }
     }
+    #endregion
 
+    #region #teacherCourse
     public function teacherCourse()
     {
         $allcourses = D("course")->getRecords();
@@ -177,5 +180,20 @@ class TeacherController extends BaseLoginController
             $this->error("NO data");
         }
     }
+    #endregion
+
+    #region #TeacherSchedule
+    public function teacherSchedule()
+    {
+        $user = $_SESSION["user"];
+        $condition ["teacher_id"]=$user["id"];
+        $items = D("TeacherCourse")->getRecords($condition);
+        $this->assign("AllCourses", json_encode($items));
+
+        $this->assignUser();
+        $this->display();
+    }
+
+    #endregion
 
 }

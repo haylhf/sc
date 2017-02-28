@@ -39,6 +39,7 @@
 
         <ul class="nav navbar-nav">
             <li class="active"><a href="#">开课管理</a></li>
+            <li><a href="{:U('teacher/TeacherSchedule')}">课程表</a></li>
             <li><a href="{:U('teacher/index')}">信息管理</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -181,6 +182,7 @@
                     <th>上课日期</th>
                     <th>上课时间段</th>
                     <th>最大人数</th>
+                    <th>已选课人数</th>
                     <th>备注</th>
                     <th width="10%">操作</th>
                 </tr>
@@ -202,6 +204,14 @@
                     <td>{{record.course_start_time|converterTime(record.course_type)}}</td>
                     <td v-if="record.course_max_people!=0">{{record.course_max_people}}</td>
                     <td v-else><b>不限</b></td>
+                    <td>
+                        <div v-if="record.selected_people>0">
+                            {{record.selected_people}}
+                        </div>
+                        <div v-else>
+                            <b>无</b>
+                        </div>
+                    </td>
                     <td>{{record.remark}}</td>
                     <td>
                         <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
@@ -222,8 +232,8 @@
 
     <div class="modal fade" id="newitemmodal" role="dialog">
         <div class="modal-dialog">
-            <!-- Modal content-->
             <div class="modal-content">
+            <!-- Modal content-->
                 <div class="modal-header" style="padding:35px 35px;">
                     <button type="button" class="close" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
@@ -555,7 +565,13 @@
             deleteRecord: function (item) {
                 this.selectInfo = item;
                 if (this.selectInfo) {
-                    $("#deleteConfirmMsg").modal();
+                    if (this.selectInfo.selected_people > 0) {
+                        app.resultMsg = '此课程已被学生选课，无法删除';
+                        $("#submitMsg").modal();
+                    }
+                    else {
+                        $("#deleteConfirmMsg").modal();
+                    }
                 }
             },
             onConfirmDelete: function () {

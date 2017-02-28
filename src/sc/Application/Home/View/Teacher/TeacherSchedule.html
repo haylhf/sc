@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+      xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+<head>
+    <title>学生选课系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
+    <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
+    <style>
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table tbody tr td {
+            height: 80px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        body {
+
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid" id="divHeader">
+        <div class="navbar-header" style="margin-top: 5px">
+            <a class="title-logo" href="#">学生选课系统</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li><a href="{:U('teacher/TeacherCourse')}">开课管理</a></li>
+            <li class="active"><a href="#">课程表</a></li>
+            <li><a href="{:U('teacher/index')}">信息管理</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <div style="margin-top: 5px;" class="container-fluid">
+                    欢迎您，
+                    <b>{{currentuser.role|converterRole}}</b>:
+                    <label style="color: #2aabd2;font-size: 20px;">
+                        {{currentuser.name}}
+                    </label>
+                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                        <span class="glyphicon glyphicon-log-out"></span> 注销
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid" id="divApp" style="margin: 15px;">
+
+    <div class="panel panel-primary" style="margin: 15px;">
+
+        <div class="panel-heading panel-title" style="text-align: left;">
+            课程表信息
+            <span class="badge" style="margin-left: 5px">{{coursecount}}</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" align="center" v-show="records.length > 0"
+                   style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th>课时</th>
+                    <th>星期一</th>
+                    <th>星期二</th>
+                    <th>星期三</th>
+                    <th>星期四</th>
+                    <th>星期五</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(record, index) in records">
+                    <td>{{record.courseTimeIndex|converterTimeIndex}}</td>
+                    <td>
+                        <div style="font-weight: bold">
+                            {{record.course1.name}}
+                        </div>
+                        <div>
+                            {{record.course1.building}}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: bold">
+                            {{record.course2.name}}
+                        </div>
+                        <div>
+                            {{record.course2.building}}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: bold">
+                            {{record.course3.name}}
+                        </div>
+                        <div>
+                            {{record.course3.building}}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: bold">
+                            {{record.course4.name}}
+                        </div>
+                        <div>
+                            {{record.course4.building}}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: bold">
+                            {{record.course5.name}}
+                        </div>
+                        <div>
+                            {{record.course5.building}}
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--<p v-show="coursecount == 0"-->
+        <!--style="width: 100%; height: 200px; line-height: 200px; text-align: center; color: darkgray">-->
+        <!--暂无课程表~~~</p>-->
+    </div>
+
+
+</div>
+</body>
+</html>
+
+<script>
+
+    var appHeader = new Vue({
+        el: '#divHeader',
+        data: {
+            currentuser: {},
+            submitUrl: "{:U('teacher/ajaxLogout')}",
+        },
+        methods: {
+            logout: function () {
+                $.ajax({
+                    url: this.submitUrl,
+                    type: 'POST',
+                    dataType: 'json',
+//                    data: '',
+                    success: function (result) {
+                        if (result.status) {
+                            window.location.href = "{:U('index/index')}";
+                        }
+                        else {
+
+                        }
+                    },
+                })
+            },
+        },
+        created: function () {
+            this.currentuser = JSON.parse('{$currentuser}');
+        },
+        filters: {
+            converterRole: function (role) {
+                return getRoleName(role);
+            }
+        },
+    });
+
+    var app = new Vue({
+        el: '#divApp',
+        data: {
+            records: [],
+            coursecount: 0,
+        },
+        filters: {
+            converterCourseProperty: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
+                }
+                return getCoursePropertyName(ctype);
+            },
+            converterCourseType: function (ctype) {
+                if (isStringEmpty(ctype)) {
+                    return '';
+                }
+                return getCourseTypeName(ctype);
+            },
+            converterTime: function (timevalue, course_type) {
+                return course_type == 0 ?
+                        getCourseTimeByMajor(timevalue) : getCourseTimeByElective(timevalue);
+
+            },
+            converterWeekDayName: function (dayvalue) {
+                return getUpperStringNumber(dayvalue);
+
+            },
+            converterTimeIndex: function (timeindex) {
+                return getAllCourseTime(timeindex);
+
+            },
+
+        },
+        methods: {},
+
+        mounted: function () {
+            var courses = JSON.parse('{$AllCourses}');
+            this.coursecount = courses.length;
+
+            for (var i = 0; i < 6; i++) {
+                var item = {
+                    courseTimeIndex: i + 1,
+                    course1: {
+                        name: '',
+                        building: '',
+                    },
+                    course2: {
+                        name: '',
+                        building: '',
+                    },
+                    course3: {
+                        name: '',
+                        building: '',
+                    },
+                    course4: {
+                        name: '',
+                        building: '',
+                    },
+                    course5: {
+                        name: '',
+                        building: '',
+                    },
+
+                };
+
+                this.records.push(item);
+            }
+
+            for (var j = 0; j < courses.length; j++) {
+                function getItem() {
+                    return {
+                        course1: {
+                            name: '',
+                            building: '',
+                        },
+                        course2: {
+                            name: '',
+                            building: '',
+                        },
+                        course3: {
+                            name: '',
+                            building: '',
+                        },
+                        course4: {
+                            name: '',
+                            building: '',
+                        },
+                        course5: {
+                            name: '',
+                            building: '',
+                        },
+
+                    };
+                }
+
+                var item = getItem();
+                switch (parseInt(courses[j].course_weekday)) {
+                    case 2:
+                        item.course2.name = courses[j].course_name;
+                        item.course2.building = courses[j].building_name;
+                        break;
+                    case 3:
+                        item.course3.name = courses[j].course_name;
+                        item.course3.building = courses[j].building_name;
+                        break;
+                    case 4:
+                        item.course4.name = courses[j].course_name;
+                        item.course4.building = courses[j].building_name;
+                        break;
+                    case 5:
+                        item.course5.name = courses[j].course_name;
+                        item.course5.building = courses[j].building_name;
+                        break;
+                    case 1:
+                    default:
+                        item.course1.name = courses[j].course_name;
+                        item.course1.building = courses[j].building_name;
+                        break;
+                }
+
+                var item2 = $.extend({}, item);
+                var courseTime = parseInt(courses[j].course_start_time);
+                if (courses[j].course_type == 0) {
+                    if (courseTime <= 2) {
+                        item.courseTimeIndex = courseTime;
+                        this.records[courseTime - 1] = item;
+
+                        item2.courseTimeIndex = courseTime + 1;
+                        this.records[courseTime] = item2;
+
+                    } else {
+                        item.courseTimeIndex = courseTime + 1;
+                        this.records[courseTime] = item;
+
+                        item2.courseTimeIndex = courseTime + 2;
+                        this.records[courseTime + 1] = item2;
+                    }
+                } else {
+                    if (courseTime == 1) {
+                        item.courseTimeIndex = courseTime;
+                        this.records[courseTime - 1] = item;
+                    }
+                    else if (courseTime == 4) {
+                        item.courseTimeIndex = courseTime + 2;
+                        this.records[courseTime + 1] = item;
+                    } else {
+                        item.courseTimeIndex = courseTime + 1;
+                        this.records[courseTime] = item;
+                    }
+                }
+            }
+
+        },
+    })
+</script>
