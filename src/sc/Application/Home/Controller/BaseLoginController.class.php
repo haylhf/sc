@@ -28,18 +28,24 @@ class BaseLoginController extends Controller
         }
 
         if ($result) {
-//            $user["id"] = $result['id'];
-//            $user["name"] = $result['name'];
-//            $user["role"] = $_POST['role'];
             $result["password"] = '';
             $result["role"] = $_POST['role'];
+
+            $result["islockcourse"] = $this->getIsLockCourse();
+
             $_SESSION["user"] = $result;
+
             $this->success(true);
         } else {
             $this->error($data);
         }
     }
 
+    public function getIsLockCourse()
+    {
+        $record = D("admin")->getLockSate();
+        return count($record) > 0;
+    }
 
     public function ajaxLogout()
     {

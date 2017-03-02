@@ -56,6 +56,23 @@ class AdminController extends BaseLoginController
         }
     }
 
+    public function ajaxLockCourse()
+    {
+        $result = null;
+        $currentUser = $_SESSION["user"];
+        $data['id'] = $currentUser['id'];
+        $condition['isLockCourse'] = $_POST['isLockCourse'] == 'true' ? 1 : 0;
+        $condition = array_merge($data, $condition);
+        $result = D("admin")->modifyIsLockCourse($condition);
+        $currentUser['islockcourse'] = $condition['isLockCourse'];
+        $_SESSION["user"] = $currentUser;
+        if ($result) {
+            $this->success(true);
+        } else {
+            $this->error($data);
+        }
+    }
+
     #region #teacher data
     public function teacherManage()
     {

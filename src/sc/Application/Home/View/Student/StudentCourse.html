@@ -40,6 +40,7 @@
 
         <ul class="nav navbar-nav">
             <li class="active"><a href="#">选课管理</a></li>
+            <li><a href="{:U('student/StudentSchedule')}">课程表</a></li>
             <li><a href="{:U('student/index')}">信息管理</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -58,8 +59,14 @@
         </ul>
     </div>
 </nav>
-<div class="container-fluid" id="divApp">
 
+<div class="container-fluid" id="divApp">
+    <div v-if="isLockCourse" style="color:darkred;font-size:12px;margin-left: 15px;margin-top: 10px;">
+        课程已锁定，老师不能开课，学生不可以选课，请联系管理员
+    </div>
+    <div style="color: darkgrey;font-size:12px;margin-top: 10px;margin-left: 15px;" v-else>
+        课程已开放，老师可以开课，学生可以选课
+    </div>
     <div class="panel panel-primary" style="margin: 15px;">
 
         <div class="panel-heading panel-title" style="text-align: left;"
@@ -67,6 +74,7 @@
             已选课程
             <span class="badge" style="margin-left: 5px">{{selectedCourses.length}}</span>
         </div>
+
         <div class="table-responsive" v-show="isToggleRecords">
             <table class="table table-bordered table-hover" align="center" v-show="selectedCourses.length > 0"
                    style="table-layout: fixed;">
@@ -104,7 +112,7 @@
                     <td v-else><b>不限</b></td>
                     <td>{{record.remark}}</td>
                     <td>
-                        <button v-bind:disabled="record.course_type == 0" class="btn btn-danger btn-sm"
+                        <button v-bind:disabled="record.course_type == 0||isLockCourse" class="btn btn-danger btn-sm"
                                 @click="deleteRecord(record)"
                                 data-toggle="tooltip" data-placement="top"
                                 title="退课"
@@ -184,7 +192,8 @@
                             </div>
                         </td>
                         <td>
-                            <input type="checkbox" :value="record" v-on:change="onCheckChanged"
+                            <input type="checkbox" v-bind:disabled="isLockCourse" :value="record"
+                                   v-on:change="onCheckChanged"
                                    v-model="checkedItems" style="width: 20px;height: 20px;">
                         </td>
                     </tr>
@@ -287,6 +296,7 @@
     var app = new Vue({
         el: '#divApp',
         data: {
+            isLockCourse: false,
             isError: false,
             errorMsg: '',
 
@@ -446,6 +456,7 @@
         created: function () {
             //load data
             this.onSearchRecords();
+            this.isLockCourse = appHeader.currentuser.islockcourse;
         },
     })
 </script>

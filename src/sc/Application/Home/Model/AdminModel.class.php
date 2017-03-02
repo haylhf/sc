@@ -31,4 +31,23 @@ class AdminModel extends Model
         return false;
     }
 
+
+    public function modifyIsLockCourse($loginData)
+    {
+        $data['id'] = $loginData['id'];
+        $data['isLockCourse'] = $loginData['isLockCourse'];
+        $result = M('admin')->data($data)->save();
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getLockSate()
+    {
+        $data['isLockCourse'] = 1;
+        $list = M('admin')->where($data)->find();
+        return $list;
+    }
+
 }

@@ -1,17 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
-      xmlns="http://www.w3.org/1999/html" xmlns:v-show="http://www.w3.org/1999/xhtml"
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns:v-show="http://www.w3.org/1999/xhtml"
       xmlns:v-click="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
-      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml">
+      xmlns:vo-on="http://www.w3.org/1999/xhtml" xmlns:v-for="http://www.w3.org/1999/xhtml"
+      lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>学生选课系统</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css">
     <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap-switch.css"/>
+    <link rel="stylesheet" href="__ROOT__/Public/css/bootstrap.min.css"/>
+
     <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/bootstrap-switch.min.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/util.js"></script>
 
     <style>
@@ -64,12 +70,36 @@
     </div>
 </nav>
 
-<div id="divApp"  style="margin: 15px;">
-    <div style="margin-bottom: 15px">
+<div id="divApp" style="margin: 15px;">
+    <div style="margin-bottom: 15px;">
+
         <button class="btn btn-primary" v-on:click="addCourse"
                 style="height: 44px;text-align:right; display:inline; margin-left: 15px">
             <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span>添加课程
         </button>
+
+        <button v-if="isLockCourse" class="btn btn-primary" type="submit" v-on:click="lockCourse"
+                style="height: 44px;text-align:right; display:inline; margin-left: 15px">
+            <span class="glyphicon glyphicon-lock" style="padding-right: 5px"></span>
+            解锁选课
+        </button>
+        <button class="btn btn-primary" v-on:click="lockCourse" type="submit"
+                style="height: 44px;text-align:right; display:inline; margin-left: 15px" v-else>
+            <span class="glyphicon glyphicon-lock" style="padding-right: 5px"></span>
+
+            锁定选课
+        </button>
+        <!--<div class="switch" data-on="On" data-off="Off">-->
+        <!--<input type="checkbox" v-model="isLockCourse" @change="onchange"/>-->
+        <!--</div>-->
+
+        <div v-if="isLockCourse" style="color: darkred;font-size:12px;margin-left: 15px;margin-top: 10px;">
+            课程已锁定，老师不能开课，学生不可以选课
+        </div>
+        <div style="color: darkgrey;font-size:12px;margin-left: 15px;margin-top: 10px;" v-else>
+            课程已开放，老师可以开课，学生可以选课
+        </div>
+
     </div>
 
     <div id="" class="container-fluid" style="margin-bottom: 15px;margin-top: 20px">
@@ -314,6 +344,8 @@
             course_elective_propertyItems: [],
             course_major_propertyItems: [],
             course_typeItems: [],
+            isLockCourse: false,
+            lockCourseUrl: "{:U('admin/ajaxLockCourse')}",
         },
         filters: {
             converterCourseProperty: function (num) {
@@ -324,6 +356,29 @@
             },
         },
         methods: {
+            lockCourse: function () {
+                this.isLockCourse = !this.isLockCourse;
+
+                $.ajax({
+                    url: this.lockCourseUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {isLockCourse: this.isLockCourse},
+                    success: function (result) {
+                        if (result.status) {
+//                            app.isLockCourse = result.info.islockcourse;
+                        } else {
+                            app.resultMsg = '锁定失败';
+                            $("#submitMsg").modal();
+                        }
+                    },
+                    error:function () {
+                        app.resultMsg = '锁定失败';
+                        $("#submitMsg").modal();
+                    },
+
+                })
+            },
             verifyForm: function () {
                 this.isError = false;
                 if (isStringEmpty(this.newInfoModel.id)) {
@@ -420,8 +475,9 @@
             }
         }
         ,
-        created: function () {
+        mounted: function () {
             this.records = JSON.parse('{$records}');
+            this.isLockCourse = appHeader.currentuser.islockcourse;
             for (var i = 0; i < 2; i++) {
                 this.course_major_propertyItems[i] = {
                     text: getCoursePropertyName(i),

@@ -135,6 +135,18 @@ class StudentController extends BaseLoginController
             $this->error('error');
         }
     }
+    #endregion
 
+    #region #studentSchedule
+    public function studentSchedule()
+    {
+        $electiveCourse = $this->getSelectedDataByElective();
+        $majorCourse = $this->getSelectedDataByMajor();
+        $selectedCourse = array_merge($electiveCourse, $majorCourse);
+        $this->assign("AllCourses", json_encode($selectedCourse));
+
+        $this->assignUser();
+        $this->display();
+    }
     #endregion
 }

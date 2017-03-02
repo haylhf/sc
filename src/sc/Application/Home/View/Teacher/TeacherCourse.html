@@ -63,10 +63,16 @@
 <div class="container-fluid" id="divApp">
 
     <div style="margin: 15px;">
-        <button class="btn btn-primary" v-on:click="onAddNewCourse"
+        <button class="btn btn-primary" v-bind:disabled="isLockCourse" v-on:click="onAddNewCourse"
                 style="height: 44px; ">
             <span class="glyphicon glyphicon-plus" style="padding-right: 5px"></span> 开设课程
         </button>
+        <div v-if="isLockCourse" style="color:darkred;font-size:12px;margin-top: 10px;">
+            课程已锁定，老师不能开课，学生不可以选课，请联系管理员
+        </div>
+        <div style="color: darkgrey;font-size:12px;margin-top: 10px;" v-else>
+            课程已开放，老师可以开课，学生可以选课
+        </div>
     </div>
 
 
@@ -213,8 +219,8 @@
                         </div>
                     </td>
                     <td>{{record.remark}}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" @click="deleteRecord(record)"
+                    <td >
+                        <button v-bind:disabled="isLockCourse" class="btn btn-danger btn-sm" @click="deleteRecord(record)"
                                 data-toggle="tooltip" data-placement="top"
                                 title="删除"
                         >
@@ -233,7 +239,7 @@
     <div class="modal fade" id="newitemmodal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-            <!-- Modal content-->
+                <!-- Modal content-->
                 <div class="modal-header" style="padding:35px 35px;">
                     <button type="button" class="close" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
@@ -484,6 +490,7 @@
             records: [],
             selectInfo: {},
             resultMsg: '',
+            isLockCourse: false,
         },
         filters: {
             converterCourseProperty: function (ctype) {
@@ -491,30 +498,36 @@
                     return '';
                 }
                 return getCoursePropertyName(ctype);
-            },
+            }
+            ,
             converterCourseType: function (ctype) {
                 if (isStringEmpty(ctype)) {
                     return '';
                 }
                 return getCourseTypeName(ctype);
-            },
+            }
+            ,
             converterWeekDay: function (weekdayText, weekdayValue) {
                 if (weekdayValue > 0) {
                     return "星期" + weekdayText;
                 }
                 return weekdayText;
-            },
+            }
+            ,
             converterTime: function (timevalue, course_type) {
                 return course_type == 0 ?
                         getCourseTimeByMajor(timevalue) : getCourseTimeByElective(timevalue);
 
-            },
+            }
+            ,
             converterWeekDayName: function (dayvalue) {
                 return getUpperStringNumber(dayvalue);
 
-            },
+            }
+            ,
 
-        },
+        }
+        ,
         methods: {
             loadyCourseWeekday: function () {
                 var items = [];
@@ -525,7 +538,8 @@
                     }
                 }
                 return items;
-            },
+            }
+            ,
 
             loadyCourseTime: function (course_type) {
                 var items = [];
@@ -537,7 +551,8 @@
                     }
                 }
                 return items;
-            },
+            }
+            ,
 
             loadyMaxPeoples: function () {
                 var items = [];
@@ -548,20 +563,24 @@
                     }
                 }
                 return items;
-            },
+            }
+            ,
             onAddNewCourse: function () {
                 $("#newitemmodal").modal();
-            },
+            }
+            ,
 
             onShowOrHideRecords: function () {
                 this.isToggleRecords = !this.isToggleRecords;
-            },
+            }
+            ,
 
             onCourseChanged: function () {
                 this.courseTimes = this.loadyCourseTime(this.current_course.course_type);
                 this.newInfoModel.course_id = this.current_course.id;
                 this.verifyForm();
-            },
+            }
+            ,
             deleteRecord: function (item) {
                 this.selectInfo = item;
                 if (this.selectInfo) {
@@ -573,7 +592,8 @@
                         $("#deleteConfirmMsg").modal();
                     }
                 }
-            },
+            }
+            ,
             onConfirmDelete: function () {
                 $("#deleteConfirmMsg").modal('hide');
                 $.ajax({
@@ -591,11 +611,13 @@
                         $("#submitMsg").modal();
                     },
                 })
-            },
+            }
+            ,
 
             onKeyUp: function () {
                 this.verifyForm();
-            },
+            }
+            ,
             verifyForm: function () {
                 this.isError = false;
 
@@ -632,7 +654,8 @@
                 if (!this.isError) {
                     this.isError = this.isConflictCourseTime();
                 }
-            },
+            }
+            ,
 
             //验证课程上课时间是否有冲突
             isConflictCourseTime: function () {
@@ -658,7 +681,8 @@
                     this.errorMsg = "当前课程的上课时间和已开课程时间冲突，请重新选择上课时间";
                 }
                 return isConflict;
-            },
+            }
+            ,
 
             //验证课程是否有重复冲突
             isRepeatCourse: function () {
@@ -673,7 +697,8 @@
                     this.errorMsg = "同一个课程在同一个专业只能开设一次，请重新选择";
                 }
                 return isRepeat;
-            },
+            }
+            ,
 
             //验证课程是否只有一种
             isErrorCourse: function () {
@@ -687,7 +712,8 @@
                     this.errorMsg = "教师只允许上一门课，可以是不同专业，请重新选择";
                 }
                 return isError;
-            },
+            }
+            ,
 
             onSearchRecords: function () {
                 $.ajax({
@@ -703,7 +729,8 @@
                         }
                     },
                 })
-            },
+            }
+            ,
 
             onSubmit: function () {
                 this.verifyForm();
@@ -732,8 +759,10 @@
                         },
                     })
                 }
-            },
-        },
+            }
+            ,
+        }
+        ,
 
         created: function () {
             this.newInfoModel.teacher_id = appHeader.currentuser.id;
@@ -779,7 +808,8 @@
 
             //load data
             this.onSearchRecords();
-
-        },
+            this.isLockCourse = appHeader.currentuser.islockcourse;
+        }
+        ,
     })
 </script>

@@ -296,34 +296,58 @@
                         break;
                 }
 
-                var item2 = $.extend({}, item);
+                var item2 = $.extend({}, item);//copy object
+                function copydata(tempData, desData) {
+                    if (!isStringEmpty(desData.course1.name)) {
+                        tempData.course1.name = desData.course1.name;
+                        tempData.course1.building = desData.course1.building;
+                    }
+                    if (!isStringEmpty(desData.course2.name)) {
+                        tempData.course2.name = desData.course2.name;
+                        tempData.course2.building = desData.course2.building;
+                    }
+                    if (!isStringEmpty(desData.course3.name)) {
+                        tempData.course3.name = desData.course3.name;
+                        tempData.course3.building = desData.course3.building;
+                    }
+                    if (!isStringEmpty(desData.course4.name)) {
+                        tempData.course4.name = desData.course4.name;
+                        tempData.course4.building = desData.course4.building;
+                    }
+                    if (!isStringEmpty(desData.course5.name)) {
+                        tempData.course5.name = desData.course5.name;
+                        tempData.course5.building = desData.course5.building;
+                    }
+                    return tempData;
+                }
+
                 var courseTime = parseInt(courses[j].course_start_time);
                 if (courses[j].course_type == 0) {
                     if (courseTime <= 2) {
                         item.courseTimeIndex = courseTime;
-                        this.records[courseTime - 1] = item;
+                        this.records[courseTime - 1] = copydata(this.records[courseTime - 1], item);
 
                         item2.courseTimeIndex = courseTime + 1;
-                        this.records[courseTime] = item2;
+                        this.records[courseTime] = copydata(this.records[courseTime], item2);
 
                     } else {
                         item.courseTimeIndex = courseTime + 1;
-                        this.records[courseTime] = item;
+                        this.records[courseTime] = copydata(this.records[courseTime], item);
 
                         item2.courseTimeIndex = courseTime + 2;
-                        this.records[courseTime + 1] = item2;
+                        this.records[courseTime + 1] = copydata(this.records[courseTime + 1], item2);
                     }
                 } else {
                     if (courseTime == 1) {
                         item.courseTimeIndex = courseTime;
-                        this.records[courseTime - 1] = item;
+                        this.records[courseTime - 1] = copydata(this.records[courseTime - 1], item);
                     }
                     else if (courseTime == 4) {
                         item.courseTimeIndex = courseTime + 2;
-                        this.records[courseTime + 1] = item;
+                        this.records[courseTime + 1] = copydata(this.records[courseTime + 1], item);
                     } else {
                         item.courseTimeIndex = courseTime + 1;
-                        this.records[courseTime] = item;
+                        this.records[courseTime] = copydata(this.records[courseTime], item);
                     }
                 }
             }
