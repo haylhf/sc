@@ -50,7 +50,11 @@
                     <label style="color: #2aabd2;font-size: 20px;">
                         {{currentuser.name}}
                     </label>
-                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                    <div>
+                        {{current_time}}
+                    </div>
+                    <button type="button" class="btn btn-link" v-on:click="logout"
+                            style="margin-right:-10px;color: darkblue;float: right">
                         <span class="glyphicon glyphicon-log-out"></span> 注销
                     </button>
                 </div>
@@ -219,8 +223,9 @@
                         </div>
                     </td>
                     <td>{{record.remark}}</td>
-                    <td >
-                        <button v-bind:disabled="isLockCourse" class="btn btn-danger btn-sm" @click="deleteRecord(record)"
+                    <td>
+                        <button v-bind:disabled="isLockCourse" class="btn btn-danger btn-sm"
+                                @click="deleteRecord(record)"
                                 data-toggle="tooltip" data-placement="top"
                                 title="删除"
                         >
@@ -418,6 +423,7 @@
         data: {
             currentuser: {},
             submitUrl: "{:U('teacher/ajaxLogout')}",
+            current_time: '',
         },
         methods: {
             logout: function () {
@@ -445,6 +451,14 @@
                 return getRoleName(role);
             },
         },
+        mounted: function () {
+            var _this = this;
+            setInterval(function getDate() {
+                var date = new Date();
+                _this.current_time = date.format("yyyy-MM-dd hh:mm:ss");
+            }, 1000);//定时器
+
+        }
     });
 
     var app = new Vue({

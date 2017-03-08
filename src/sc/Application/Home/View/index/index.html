@@ -12,6 +12,8 @@
     <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
     <script type="text/javascript" src="__ROOT__/Public/js/vue.js"></script>
     <script type="text/javascript" src="__ROOT__/Public/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
+
     <style>
         body {
             text-align: center;
@@ -41,7 +43,7 @@
         <h3 class="panel-title" style="font-size: 26px;"></span>登录</h3>
     </div>
     <div class="container">
-        <form class="form-horizontal" role="form" v-on:submit.prevent="submit" style="margin-top: 30px;" >
+        <form class="form-horizontal" role="form" v-on:submit.prevent="submit" style="margin-top: 30px;">
             <div class="form-group">
                 <label class="control-label col-sm-1"><span class="glyphicon glyphicon-user"></span> 账号:</label>
                 <div class="col-sm-4">
@@ -49,7 +51,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-1"><span class="glyphicon glyphicon-lock"></span > 密码:</label>
+                <label class="control-label col-sm-1"><span class="glyphicon glyphicon-lock"></span> 密码:</label>
                 <div class="col-sm-4">
                     <input type="password" class="form-control" v-model="submitData.userPwd" placeholder="输入密码"/>
                 </div>
@@ -76,7 +78,7 @@
         </form>
     </div>
     <div class="alert alert-danger" v-if="isError">
-        用户名或密码错误!
+        {{errorMsg}}!
     </div>
 </div>
 
@@ -89,6 +91,7 @@
         el: '#divForm',
         data: {
             isError: false,
+            errorMsg: '',
             submitUrl: "{:U('index/ajaxLogin')}",
             teacherUrl: "{:U('teacher/TeacherCourse')}",
             studentUrl: "{:U('student/StudentCourse')}",
@@ -104,21 +107,39 @@
             checkRole: function (roleValue) {
                 this.submitData.role = roleValue;
             },
+            validateForm: function () {
+                var isFail = false;
+                if (isStringEmpty(this.submitData.userId)) {
+                    isFail = true;
+                    this.errorMsg = "账号不能为空";
+                }
+                if (!isFail && isStringEmpty(this.submitData.userPwd)) {
+                    isFail = true;
+                    this.errorMsg = "密码不能为空";
+                }
+                return isFail;
+            },
             submit: function () {
-                var forwardUrl = parseInt(this.submitData.role) == 1 ? this.teacherUrl : this.studentUrl;
-                $.ajax({
-                    url: this.submitUrl,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: this.submitData,
-                    success: function (data) {
-                        app.isError = data.status == 0;
-                        if (!app.isError) {
+                this.isError = this.validateForm();
+                if (!this.isError) {
+                    var forwardUrl = parseInt(this.submitData.role) == 1 ? this.teacherUrl : this.studentUrl;
+                    $.ajax({
+                        url: this.submitUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: this.submitData,
+                        success: function (data) {
+                            app.isError = data.status == 0;
+                            if (!app.isError) {
 //                            alert('success!');
-                            window.location.href = forwardUrl;
-                        }
-                    },
-                })
+                                window.location.href = forwardUrl;
+                            }
+                            else {
+                                app.errorMsg = '用户名或密码错误';
+                            }
+                        },
+                    })
+                }
             }
         },
     })

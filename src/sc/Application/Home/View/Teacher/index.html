@@ -42,7 +42,11 @@
                     <label style="color: #2aabd2;font-size: 20px;">
                         {{currentuser.name}}
                     </label>
-                    <button type="button" class="btn btn-link" v-on:click="logout" style="color: darkblue">
+                    <div>
+                        {{current_time}}
+                    </div>
+                    <button type="button" class="btn btn-link" v-on:click="logout"
+                            style="margin-right:-10px;color: darkblue;float: right">
                         <span class="glyphicon glyphicon-log-out"></span> 注销
                     </button>
                 </div>
@@ -50,7 +54,7 @@
         </ul>
     </div>
 </nav>
-<div class="container-fluid" id="divApp"  style="margin: 15px;">
+<div class="container-fluid" id="divApp" style="margin: 15px;">
     <div class="panel panel-primary">
         <div class="panel-heading" v-on:click="onShowHideInfo">
             <div style="font-size: 20px;text-align: left">
@@ -204,6 +208,7 @@
         data: {
             currentuser: {},
             submitUrl: "{:U('teacher/ajaxLogout')}",
+            current_time: '',
         },
         methods: {
             logout: function () {
@@ -231,6 +236,14 @@
                 return getRoleName(role);
             }
         },
+        mounted: function () {
+            var _this = this;
+            setInterval(function getDate() {
+                var date = new Date();
+                _this.current_time = date.format("yyyy-MM-dd hh:mm:ss");
+            }, 1000);//定时器
+
+        }
     });
 
 
@@ -359,7 +372,6 @@
                 this.modifyInfo.email = user.email;
                 this.modifyInfo.phone = user.phone;
             }
-
         },
     })
 </script>

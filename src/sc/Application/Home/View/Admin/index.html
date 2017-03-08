@@ -11,6 +11,8 @@
     <link type="text/css" href="__ROOT__/Public/css/mystyle.css" rel="stylesheet"/>
     <script type='text/javascript' src='__ROOT__/Public/js/vue.js'></script>
     <script type='text/javascript' src='__ROOT__/Public/js/jquery-3.1.1.min.js'></script>
+    <script type="text/javascript" src="__ROOT__/Public/js/util.js" ></script >
+
     <style>
         body {
             text-align: center;
@@ -25,7 +27,7 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="Jumbotron" style="margin-top: 15px;height: 100px;font-size: 28px">
-            <a class="title-logo" href="#" >学生选课系统</a >
+            <a class="title-logo" href="#">学生选课系统</a>
         </div>
 
         <!--<ul class="nav navbar-nav navbar-right">-->
@@ -42,27 +44,31 @@
     <div class="container">
         <form class="form-horizontal" role="form" style="margin-top: 30px;" v-on:submit.prevent="submit">
             <div class="form-group">
-                <label class="control-label col-sm-1"><span class="glyphicon glyphicon-user"></span> 账号:</label>
+                <label class="control-label col-sm-1">
+                    <span class="glyphicon glyphicon-user"></span> 账号:</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" v-model.trim="submitData.userName" placeholder="管理员名称"/>
+                    <input type="text" class="form-control"
+                           v-model.trim="submitData.userName" placeholder="管理员名称"/>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-1" ><span class="glyphicon glyphicon-lock"></span> 密码:</label>
+                <label class="control-label col-sm-1">
+                    <span class="glyphicon glyphicon-lock"></span> 密码:</label>
                 <div class="col-sm-4">
-                    <input type="password" class="form-control" v-model="submitData.userPwd" placeholder="输入密码"/>
+                    <input type="password" class="form-control"
+                           v-model="submitData.userPwd" placeholder="输入密码"/>
                 </div>
             </div>
 
             <div class="col-sm-offset-2 col-sm-3" style="text-align: right;margin-top:20px;margin-bottom:20px;">
-                <button type="submit"  class="btn btn-primary" v-on:submit="submit" style="width: 100px; height: 36px">
-                  <span class="glyphicon glyphicon-ok"></span> 登录
+                <button type="submit" class="btn btn-primary" v-on:submit="submit" style="width: 100px; height: 36px">
+                    <span class="glyphicon glyphicon-ok"></span> 登录
                 </button>
             </div>
         </form>
     </div>
     <div class="alert alert-danger" v-if="isError">
-     用户名或密码错误!
+        {{errorMsg}}!
     </div>
 
 </div>
@@ -74,6 +80,7 @@
         el: '#divForm',
         data: {
             isError: false,
+            errorMsg: '',
             submitUrl: "{:U('admin/ajaxLogin')}",
             submitData: {
                 userId: '',
@@ -83,20 +90,37 @@
             },
         },
         methods: {
+            validateForm: function () {
+                var isFail = false;
+                if (isStringEmpty(this.submitData.userName)) {
+                    isFail = true;
+                    this.errorMsg = "账号不能为空";
+                }
+                if (!isFail && isStringEmpty(this.submitData.userPwd)) {
+                    isFail = true;
+                    this.errorMsg = "密码不能为空";
+                }
+                return isFail;
+            },
             submit: function () {
-                $.ajax({
-                    url: this.submitUrl,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: this.submitData,
-                    success: function (data) {
-                        app.isError = data.status == 0;
-                        if (!app.isError) {
-                            window.location.href = "{:U('admin/teacherManage')}";
-                        }
-
-                    },
-                })
+                this.isError = this.validateForm();
+                if (!this.isError) {
+                    $.ajax({
+                        url: this.submitUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: this.submitData,
+                        success: function (data) {
+                            app.isError = data.status == 0;
+                            if (!app.isError) {
+                                window.location.href = "{:U('admin/teacherManage')}";
+                            }
+                            else {
+                                app.errorMsg = '用户名或密码错误';
+                            }
+                        },
+                    })
+                }
             }
         }
         ,
